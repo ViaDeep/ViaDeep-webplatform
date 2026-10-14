@@ -78,7 +78,8 @@ export function MapPage() {
   const [layer, setLayer] = useState<BaseLayer>('streets');
   const [draft, setDraft] = useState<MapFilters>(DEFAULT_FILTERS);
   const [filters, setFilters] = useState<MapFilters>(DEFAULT_FILTERS);
-  const [panelOpen, setPanelOpen] = useState(true);
+  // En pantallas pequeñas el panel de filtros empieza cerrado para que se vea el mapa.
+  const [panelOpen, setPanelOpen] = useState(() => window.matchMedia('(min-width: 901px)').matches);
   const [selectedId, setSelectedId] = useState<string | null>(focusId);
 
   const { data, error } = useLoader(async () => {
