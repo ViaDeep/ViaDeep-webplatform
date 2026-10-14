@@ -1,8 +1,10 @@
+// Los estilos base van primero para que los de cada pantalla los puedan sobrescribir.
+import './styles/tokens.css';
+
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import App from './App';
-import './styles/tokens.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

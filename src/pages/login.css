@@ -1,2 +1,44 @@
-.login { min-height: 100%; display: flex; align-items: center; justify-content: center; padding: 16px; background: var(--navy); }
-.login-card { width: 100%; max-width: 400px; padding: 28px; display: flex; flex-direction: column; gap: 16px; }
+.login-page { min-height: 100vh; display: flex; flex-direction: column; background: linear-gradient(180deg, #f6f8fe 0%, #eef3fd 100%); }
+.login-header { height: 68px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; background: rgba(255, 255, 255, 0.85); border-bottom: 1px solid var(--border-faint); }
+.login-org { display: flex; align-items: center; gap: 12px; }
+.login-org-icon { width: 32px; height: 32px; border-radius: 4px; background: var(--navy); color: #fff; display: inline-flex; align-items: center; justify-content: center; }
+.login-org-name { font-weight: 600; font-size: 15px; display: flex; align-items: center; gap: 8px; }
+.login-mml { height: 20px; font-size: 10px; }
+.login-org-sub { font-size: 13px; color: var(--text-secondary); }
+.login-header-right { display: flex; align-items: center; gap: 12px; }
+.login-node { height: 26px; color: var(--navy); font-weight: 500; border: 1px solid #c9daf6; }
+.login-secure { font-size: 10px; letter-spacing: 0.06em; padding-left: 12px; border-left: 1px solid var(--border); color: var(--text-secondary); }
+
+.login-main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 16px 24px; gap: 18px; }
+.login-card { width: 100%; max-width: 480px; padding: 34px 32px 30px; display: flex; flex-direction: column; gap: 16px; border-color: var(--border); }
+.login-brand { display: flex; justify-content: center; align-items: center; gap: 14px; }
+.login-brand-name { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; color: var(--navy); line-height: 1.1; }
+.login-brand-name span { color: var(--primary-bright); }
+.login-brand-tag { font-size: 10px; letter-spacing: 0.1em; color: var(--text-secondary); font-weight: 500; }
+.login-strip { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 7px 10px; background: var(--surface-muted); border: 1px solid #d6e2f8; border-radius: 3px; font-size: 11px; color: var(--text-secondary); text-align: center; }
+.login-strip .ms { color: var(--primary); }
+.login-heading { text-align: center; margin: 8px 0 4px; }
+.login-heading h1 { font-size: 22px; font-weight: 600; color: var(--navy); }
+.login-heading p { color: var(--text-secondary); margin-top: 6px; }
+.login-label { font-size: 12px; color: var(--text-strong); font-weight: 600; letter-spacing: 0; }
+.login-input { height: 42px; font-size: 15px; }
+.login-password .input { padding-right: 44px; }
+.login-eye { position: absolute; right: 3px; top: 3px; }
+.login-row { display: flex; align-items: center; justify-content: space-between; font-size: 13px; color: var(--text-secondary); }
+.login-forgot { border: none; background: none; color: var(--primary); cursor: pointer; font-size: 13px; padding: 0; }
+.login-submit { height: 44px; font-size: 15px; margin-top: 4px; }
+.login-legal { display: flex; gap: 10px; padding-top: 18px; border-top: 1px solid var(--border-faint); font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+.login-legal .ms { color: var(--primary); font-size: 18px; }
+.login-legal strong { color: var(--text-strong); font-size: 13px; }
+.login-links { display: flex; align-items: center; gap: 16px; font-size: 12px; }
+.login-links a, .login-links > span:not(.dot) { color: var(--text-secondary); display: inline-flex; gap: 6px; align-items: center; }
+.login-sep { width: 4px; height: 4px; background: var(--border); }
+
+.login-footer { min-height: 46px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 24px; background: rgba(255, 255, 255, 0.9); border-top: 1px solid var(--border-faint); font-size: 13px; color: var(--text-secondary); flex-wrap: wrap; }
+.login-footer-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.login-status { height: 22px; background: var(--surface-muted); color: var(--navy); border: 1px solid #c9daf6; }
+.login-status .dot { background: var(--success); }
+.login-status.off .dot { background: var(--danger-bright); }
+.login-footer-sep { width: 1px; height: 16px; background: var(--border); }
+.login-model { color: var(--primary); }
+.login-footer-right { font-size: 12px; }

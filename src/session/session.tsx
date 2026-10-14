@@ -8,24 +8,27 @@ const TOKEN_KEY = 'viadeep.operatorToken';
 type Session = {
   loading: boolean;
   user: User | null;
-  signIn: (email: string, password: string) => Promise<void>;
+  /** Con `remember` el token queda en localStorage; si no, solo dura mientras la pestaña esté abierta. */
+  signIn: (email: string, password: string, remember: boolean) => Promise<void>;
   signOut: () => void;
+  updateUser: (user: User) => void;
 };
 
 const SessionContext = createContext<Session | null>(null);
 
 function readToken(): string | null {
   try {
-    return localStorage.getItem(TOKEN_KEY);
+    return localStorage.getItem(TOKEN_KEY) ?? sessionStorage.getItem(TOKEN_KEY);
   } catch {
     return null;
   }
 }
 
-function writeToken(token: string | null) {
+function writeToken(token: string | null, remember = true) {
   try {
-    if (token) localStorage.setItem(TOKEN_KEY, token);
-    else localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
+    if (token) (remember ? localStorage : sessionStorage).setItem(TOKEN_KEY, token);
   } catch {
     // Sin almacenamiento (modo privado): la sesión dura lo que la pestaña.
   }
@@ -53,21 +56,25 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       .finally(() => setLoading(false));
   }, [signOut]);
 
-  const signIn = useCallback(async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string, remember: boolean) => {
     const token = await authApi.login(email.trim(), password);
     const me = await authApi.me(token);
     if (me.role !== 'OPERATOR') {
       throw new Error('Esta plataforma es para operadores municipales. Los ciudadanos usan la app móvil.');
     }
     currentToken = token;
-    writeToken(token);
+    writeToken(token, remember);
     setUser(me);
   }, []);
 
-  const value = useMemo(() => ({ loading, user, signIn, signOut }), [loading, user, signIn, signOut]);
+  const value = useMemo(
+    () => ({ loading, user, signIn, signOut, updateUser: setUser }),
+    [loading, user, signIn, signOut],
+  );
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }
 
+// eslint-disable-next-line react/only-export-components -- el hook vive junto a su proveedor
 export function useSession(): Session {
   const value = useContext(SessionContext);
   if (!value) throw new Error('useSession debe usarse dentro de SessionProvider');
