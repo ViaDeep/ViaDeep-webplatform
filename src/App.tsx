@@ -22,6 +22,12 @@ function RequireOperator() {
   return user.passwordChangeRequired ? <Navigate to="/cambiar-clave" replace /> : <Outlet />;
 }
 
+/** Solo el administrador gestiona las cuentas; un operador que entre a /usuarios vuelve a Configuración. */
+function RequireAdministrator() {
+  const { user } = useSession();
+  return user?.administrator ? <Outlet /> : <Navigate to="/configuracion" replace />;
+}
+
 export default function App() {
   return (
     <SessionProvider>
@@ -37,7 +43,9 @@ export default function App() {
               <Route path="mapa" element={<MapPage />} />
               <Route path="asignaciones" element={<AssignmentsPage />} />
               <Route path="estadisticas" element={<StatisticsPage />} />
-              <Route path="usuarios" element={<UsersPage />} />
+              <Route element={<RequireAdministrator />}>
+                <Route path="usuarios" element={<UsersPage />} />
+              </Route>
               <Route path="notificaciones" element={<NotificationsPage />} />
               <Route path="configuracion" element={<SettingsPage />} />
             </Route>
