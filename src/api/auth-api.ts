@@ -18,11 +18,13 @@ export type User = {
   lastLoginAt: string | null;
   /** true mientras el operador tenga la contraseña temporal con la que lo dieron de alta. */
   passwordChangeRequired: boolean;
+  /** El encargado que designa la municipalidad: el único que crea, activa y desactiva cuentas. */
+  administrator: boolean;
 };
 
 export type UserFilters = { role?: Role; enabled?: boolean; q?: string; page?: number; size?: number };
 
-export type NewOperator = { fullName: string; email: string; password: string };
+export type NewOperator = { fullName: string; email: string; documentNumber: string; password: string };
 
 export const authApi = {
   async login(email: string, password: string): Promise<string> {
@@ -84,6 +86,7 @@ export const userApi = {
     await http.post('/auth/operators', {
       fullName: operator.fullName.trim(),
       email: operator.email.trim(),
+      documentNumber: operator.documentNumber.trim(),
       password: operator.password,
     });
   },
