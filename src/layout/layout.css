@@ -1,0 +1,28 @@
+/* Estructura provisional: se ajustará a las pantallas web de Figma. */
+.shell { display: flex; min-height: 100%; }
+.sidebar { width: 240px; flex-shrink: 0; background: var(--navy); color: #fff; display: flex; flex-direction: column; padding: 20px 12px; gap: 24px; }
+.brand { font-weight: 700; font-size: 18px; padding: 0 8px; }
+.brand .mono { font-size: 10px; letter-spacing: 0.08em; color: rgba(255, 255, 255, 0.6); margin-left: 6px; }
+.sidebar nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.nav { color: rgba(255, 255, 255, 0.75); text-decoration: none; padding: 9px 10px; border-radius: 6px; font-weight: 500; }
+.nav:hover { background: rgba(255, 255, 255, 0.06); }
+.nav.active { background: var(--primary); color: #fff; }
+.account { border-top: 1px solid rgba(255, 255, 255, 0.12); padding: 16px 8px 0; display: flex; flex-direction: column; gap: 6px; }
+.account-name { font-weight: 600; }
+.account-email { font-size: 11px; color: rgba(255, 255, 255, 0.6); margin-bottom: 8px; }
+.main { flex: 1; padding: 28px 32px; min-width: 0; }
+.page-title { font-size: 22px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.02em; }
+.page-sub { color: var(--text-secondary); margin: 0 0 20px; }
+.badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.badge-muted { color: var(--text-muted); background: var(--surface-muted); }
+.table { width: 100%; border-collapse: collapse; }
+.table th { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--border-faint); }
+.table td { padding: 12px; border-bottom: 1px solid var(--surface-muted); }
+.table tr.row { cursor: pointer; }
+.table tr.row:hover td { background: var(--background); }
+@media (max-width: 800px) {
+  .shell { flex-direction: column; }
+  .sidebar { width: auto; }
+  .sidebar nav { flex-direction: row; flex-wrap: wrap; }
+  .main { padding: 20px 16px; }
+}
