@@ -14,3 +14,10 @@
 .cell-type .ms { color: var(--primary); }
 .cell-place { display: flex; flex-direction: column; gap: 2px; }
 .cell-place .mono { font-size: 11px; color: var(--text-muted); }
+
+@media (max-width: 640px) {
+  .filters-grid { grid-template-columns: 1fr; }
+  .filters-actions .btn { flex: 1; }
+  .table-title { flex-wrap: wrap; }
+  .table-title-meta { margin-left: 0; }
+}

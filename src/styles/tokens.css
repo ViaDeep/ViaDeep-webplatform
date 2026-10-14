@@ -130,7 +130,7 @@ textarea.input { height: auto; padding: 10px 12px; resize: vertical; line-height
 .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
 .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
-@media (max-width: 1100px) { .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+@media (max-width: 1100px) { .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } .grid-3, .grid-2 { grid-template-columns: minmax(0, 1fr); } }
 
 /* Indicadores */
 .kpi { padding: 16px 16px 14px; display: flex; flex-direction: column; gap: 10px; }
@@ -153,10 +153,10 @@ table.data { width: 100%; border-collapse: collapse; }
 table.data th { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border-faint); background: var(--surface); }
 table.data td { padding: 14px 16px; border-bottom: 1px solid var(--border-faint); vertical-align: middle; font-size: 14px; }
 table.data tbody tr:hover { background: var(--background); }
-table.data td .code { font-family: var(--mono); color: var(--primary); font-weight: 500; }
+table.data td .code { font-family: var(--mono); color: var(--primary); font-weight: 500; white-space: nowrap; }
 .table-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 16px; flex-wrap: wrap; font-size: 13px; color: var(--text-secondary); }
 .pager { display: flex; align-items: center; gap: 6px; }
-.pager button { min-width: 32px; height: 32px; border-radius: 4px; border: 1px solid transparent; background: none; cursor: pointer; padding: 0 10px; color: var(--text-strong); }
+.pager button { white-space: nowrap; min-width: 32px; height: 32px; border-radius: 4px; border: 1px solid transparent; background: none; cursor: pointer; padding: 0 10px; color: var(--text-strong); }
 .pager button.current { background: var(--navy); color: #fff; }
 .pager button.edge { border-color: var(--border); }
 .pager button:disabled { color: var(--text-muted); cursor: default; }
@@ -184,3 +184,22 @@ table.data td .code { font-family: var(--mono); color: var(--primary); font-weig
 .modal-label { display: inline-flex; align-items: center; gap: 6px; color: var(--text-strong); font-weight: 600; }
 .modal-label .ms { color: var(--primary); }
 a.btn, a.btn:hover, a.icon-btn:hover { text-decoration: none; }
+
+@media (max-width: 1024px) { table.data { min-width: 760px; } }
+
+/* Celular: márgenes y títulos más compactos; las tablas se desplazan de lado dentro de su tarjeta. */
+@media (max-width: 640px) {
+  .page { padding: 16px 16px 32px; gap: 16px; }
+  .page-head > :first-child { flex-basis: 100%; }
+  .page-title { font-size: 22px; }
+  .page-actions { width: 100%; }
+  .grid-4 { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .card-pad { padding: 16px; }
+  table.data td, table.data th { padding: 12px; }
+  .table-foot { justify-content: center; }
+  .modal-backdrop { align-items: flex-end; padding: 0; }
+  .modal { max-width: none; border-radius: var(--radius) var(--radius) 0 0; max-height: 92vh; overflow-y: auto; }
+  .modal-head, .modal-body, .modal-foot { padding-left: 16px; padding-right: 16px; }
+  .modal-foot { flex-wrap: wrap; }
+  .modal-foot .btn { flex: 1; }
+}
