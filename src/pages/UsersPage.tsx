@@ -272,7 +272,7 @@ function NewUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
       </div>
       <div className="notice">
         <Icon name="verified_user" />
-        <span>La cuenta quedará activa de inmediato. El nuevo operador puede cambiar su contraseña desde Configuración › Seguridad.</span>
+        <span>Usa el correo institucional de la persona. La contraseña es temporal: el nuevo operador deberá cambiarla la primera vez que ingrese.</span>
       </div>
       {error ? <p className="error">{error}</p> : null}
     </Modal>
