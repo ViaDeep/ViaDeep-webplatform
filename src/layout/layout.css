@@ -2,16 +2,18 @@
 .shell { min-height: 100vh; }
 .topbar { position: fixed; top: 0; left: 0; right: 0; height: 64px; z-index: 500; display: flex; align-items: center; gap: 20px; padding: 0 20px 0 24px; background: var(--surface); border-bottom: 1px solid var(--border-faint); }
 .topbar-brand { display: flex; align-items: center; gap: 12px; min-width: 0; flex-shrink: 1; }
-.topbar-title { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.2; }
+.topbar-brand > div { min-width: 0; }
+.topbar-title { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .topbar-sub { font-size: 10px; letter-spacing: 0.08em; color: var(--text-secondary); margin-top: 2px; }
-.topbar-search { width: 220px; flex-shrink: 0; }
+.topbar-search { width: 220px; flex-shrink: 1; min-width: 160px; }
 .topbar-search .input { height: 36px; background: var(--background); font-size: 13px; }
 .topbar-nav { display: flex; gap: 22px; align-self: stretch; }
 .tab { display: flex; align-items: center; color: var(--text-secondary); font-size: 15px; border-bottom: 2px solid transparent; padding-top: 2px; white-space: nowrap; }
 .tab:hover { color: var(--text-strong); text-decoration: none; }
 .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 500; }
 .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
-.net-pill { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 10px; border-radius: 4px; background: var(--surface-muted); border: 1px solid var(--border-faint); font-size: 11px; margin-right: 6px; }
+.net-pill { white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 10px; border-radius: 4px; background: var(--surface-muted); border: 1px solid var(--border-faint); font-size: 11px; margin-right: 6px; }
 .net-pill .dot { background: var(--success); }
 .net-pill.off { background: var(--danger-surface); color: var(--danger); }
 .net-pill.off .dot { background: var(--danger-bright); }
@@ -45,9 +47,39 @@
 
 .main { margin-left: 256px; padding-top: 64px; min-height: 100vh; }
 
+/* Elementos que solo aparecen en tablet y celular. */
+.menu-toggle, .sidebar-backdrop, .sidebar-search, .side-link { display: none; }
+
 @media (max-width: 1280px) {
   .topbar-search { display: none; }
 }
 @media (max-width: 1100px) {
   .topbar-nav, .topbar-user-text, .topbar-sub { display: none; }
+}
+/* Tablet: el menú lateral se vuelve un panel deslizable. */
+@media (max-width: 1024px) {
+  .topbar { gap: 10px; padding: 0 12px; }
+  .menu-toggle { display: inline-flex; color: var(--text-strong); flex-shrink: 0; }
+  .sidebar { transform: translateX(-100%); transition: transform 0.2s ease; box-shadow: none; width: 280px; max-width: 86vw; z-index: 600; }
+  .sidebar.open { transform: none; box-shadow: 0 12px 40px rgba(15, 32, 66, 0.25); }
+  .sidebar-backdrop { display: block; position: fixed; inset: 64px 0 0 0; z-index: 550; background: rgba(15, 32, 66, 0.35); }
+  .sidebar-search { display: block; }
+  .sidebar-search .input { height: 38px; background: var(--surface); font-size: 13px; }
+  .side-link { display: flex; }
+  .side-link:hover { text-decoration: none; }
+  .main { margin-left: 0; }
+}
+/* Celular */
+@media (max-width: 900px) {
+  .topbar-title-org { display: none; }
+}
+@media (max-width: 640px) {
+  .topbar-title { font-size: 15px; }
+  .net-ms, .topbar-extra { display: none; }
+  .topbar-brand { gap: 8px; }
+  .net-pill { padding: 0 8px; margin-right: 0; }
+  .topbar-user { padding-left: 8px; margin-left: 2px; }
+}
+@media (max-width: 380px) {
+  .net-pill .mono { display: none; }
 }
