@@ -42,3 +42,15 @@
 .login-footer-sep { width: 1px; height: 16px; background: var(--border); }
 .login-model { color: var(--primary); }
 .login-footer-right { font-size: 12px; }
+
+@media (max-width: 760px) {
+  .login-header { height: auto; padding: 10px 16px; gap: 10px; }
+  .login-header-right { display: none; }
+  .login-org-sub { font-size: 12px; }
+  .login-main { padding: 24px 16px; justify-content: flex-start; }
+  .login-card { padding: 24px 18px; }
+  .login-brand-name { font-size: 24px; }
+  .login-row { flex-wrap: wrap; gap: 8px; }
+  .login-links { flex-wrap: wrap; justify-content: center; }
+  .login-footer { padding: 10px 16px; }
+}
