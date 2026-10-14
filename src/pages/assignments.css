@@ -15,3 +15,9 @@
 .assignee { display: inline-flex; align-items: flex-start; gap: 6px; padding: 5px 10px; border-radius: 4px; background: var(--surface-muted); color: var(--primary); font-size: 13px; }
 .assignee small { display: block; color: var(--text-secondary); font-size: 11px; }
 .assignee.none { background: none; color: var(--text-muted); padding: 0; }
+
+@media (max-width: 640px) {
+  .assign-search { min-width: 0; max-width: none; flex-basis: 100%; }
+  .assign-select { flex-wrap: wrap; width: 100%; }
+  .assign-select .select { width: 100%; }
+}
