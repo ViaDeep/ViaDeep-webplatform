@@ -9,11 +9,22 @@ import { LIMA_CENTER, markerColor } from './map-style';
 
 export type BaseLayer = 'streets' | 'satellite';
 
+const OSM_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+const cartoKey = import.meta.env.VITE_CARTO_API_KEY?.trim();
+
+/**
+ * Desde septiembre de 2026 CARTO exige una clave (VITE_CARTO_API_KEY, gratis en carto.com/basemaps/apikey). Sin clave
+ * se usa el mapa estándar de OpenStreetMap, que no la necesita, para que el mapa nunca salga en blanco.
+ */
+const STREETS = cartoKey
+  ? {
+      url: `https://basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}.png?key=${encodeURIComponent(cartoKey)}`,
+      attribution: `${OSM_ATTRIBUTION} &copy; <a href="https://carto.com/">CARTO</a>`,
+    }
+  : { url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png', attribution: OSM_ATTRIBUTION };
+
 const TILES: Record<BaseLayer, { url: string; attribution: string }> = {
-  streets: {
-    url: 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-  },
+  streets: STREETS,
   satellite: {
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     attribution: 'Imágenes &copy; Esri',

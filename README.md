@@ -25,6 +25,16 @@ En desarrollo, Vite reenvía `/auth`, `/incidents` y `/evidences` a los servicio
 BACKEND_HOST=192.168.1.50 npm run dev
 ```
 
+### Mapa SIG
+
+El mapa de calles usa CARTO, que pide una clave gratuita desde septiembre de 2026. Pídela en https://carto.com/basemaps/apikey (uso no comercial, hasta 5 millones de teselas al mes) y guárdala en un archivo `.env.local` en la raíz del proyecto, que no se sube a GitHub:
+
+```bash
+VITE_CARTO_API_KEY=tu-clave
+```
+
+Reinicia `npm run dev` después de crearlo. Sin clave, el mapa usa el estilo estándar de OpenStreetMap.
+
 Para un despliegue detrás del API Gateway, `VITE_API_URL` define la URL base de la API (por defecto, el mismo origen).
 
 ## Comandos
