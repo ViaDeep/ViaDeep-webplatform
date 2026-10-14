@@ -1,0 +1,43 @@
+.settings-verified { height: 30px; font-family: var(--mono); background: var(--surface); border: 1px solid var(--border); color: var(--text-secondary); }
+.settings-grid { align-items: start; }
+.settings-card { padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.settings-card .card-head { margin-bottom: 0; }
+.settings-card .card-title { font-size: 20px; }
+.settings-avatar-row { display: flex; align-items: center; gap: 14px; }
+.settings-avatar { width: 64px; height: 64px; border-radius: 6px; background: var(--navy); color: #fff; font-size: 22px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.settings-avatar-row > div { display: flex; flex-direction: column; gap: 2px; }
+.settings-avatar-row .mono { font-size: 11px; }
+.settings-form { display: flex; flex-direction: column; gap: 14px; }
+.settings-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.settings-inline { display: flex; gap: 10px; align-items: center; }
+.settings-fixed { background: var(--surface-muted); color: var(--text-secondary); border: 1px solid var(--border-faint); height: 38px; display: inline-flex; align-items: center; }
+.settings-role { height: 38px; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; border-radius: 4px; background: var(--surface-blue); border: 1px solid #bcd0f2; color: var(--primary); font-weight: 500; font-size: 13px; }
+.settings-actions { display: flex; justify-content: flex-end; align-items: center; gap: 12px; padding-top: 16px; border-top: 1px solid var(--border-faint); }
+.settings-subtitle { font-size: 15px; font-weight: 600; }
+.settings-session-title { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid var(--border-faint); }
+.settings-last { font-size: 11px; background: var(--surface); border: 1px solid var(--border); color: var(--text-secondary); height: auto; padding: 6px 10px; }
+.settings-eye { position: absolute; right: 2px; top: 1px; }
+.settings-session { display: flex; align-items: center; gap: 14px; padding: 14px; border: 1px solid var(--border-faint); border-radius: 4px; }
+.settings-session > div { display: flex; flex-direction: column; gap: 2px; }
+.settings-session .mono { font-size: 11px; }
+.settings-session-icon { width: 40px; height: 40px; border-radius: 4px; background: var(--surface-blue); color: var(--navy); display: inline-flex; align-items: center; justify-content: center; }
+.settings-logout { color: var(--danger-bright); border: 1px solid #f6c2bd; background: var(--surface); }
+.settings-pref { display: flex; align-items: center; gap: 16px; padding: 16px; border: 1px solid var(--border-faint); border-radius: 4px; }
+.settings-pref > div { flex: 1; }
+.settings-pref strong { display: flex; align-items: center; gap: 8px; font-size: 15px; }
+.settings-pref p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; padding-left: 26px; }
+.settings-pref.disabled { opacity: 0.6; }
+.settings-box { padding: 14px 16px; border: 1px solid var(--border-faint); border-radius: 4px; display: flex; flex-direction: column; gap: 6px; }
+.settings-version { flex-direction: row; justify-content: space-between; align-items: center; }
+.settings-version > div { display: flex; flex-direction: column; gap: 4px; }
+.settings-status-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.settings-ok { background: var(--success-surface); color: var(--success); border: 1px solid #b5e8d4; }
+.settings-ok .dot { background: var(--success); }
+.settings-bad { background: var(--danger-surface); color: var(--danger); }
+.settings-bad .dot { background: var(--danger-bright); }
+.settings-services { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; }
+.settings-service { display: inline-flex; gap: 4px; align-items: center; }
+.settings-service.up .ms { color: var(--success); }
+.settings-service.down { color: var(--danger); }
+.settings-footer .mono { white-space: nowrap; }
+.settings-footer { display: flex; justify-content: space-between; gap: 12px; padding-top: 16px; border-top: 1px solid var(--border-faint); font-size: 12px; color: var(--text-secondary); }
