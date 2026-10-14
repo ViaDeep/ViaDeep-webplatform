@@ -82,6 +82,11 @@ export const userApi = {
     return data;
   },
 
+  async setAdministrator(id: string, administrator: boolean): Promise<User> {
+    const { data } = await http.patch<User>(`/auth/users/${id}/administrator`, { administrator });
+    return data;
+  },
+
   async createOperator(operator: NewOperator): Promise<void> {
     await http.post('/auth/operators', {
       fullName: operator.fullName.trim(),

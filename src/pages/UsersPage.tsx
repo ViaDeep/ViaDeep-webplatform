@@ -47,6 +47,23 @@ export function UsersPage() {
     return { active: active.totalItems, inactive: inactive.totalItems };
   }, 'counts');
 
+  async function setAdministrator(user: User, administrator: boolean) {
+    const question = administrator
+      ? `¿Hacer administrador a ${user.fullName}? Podrá crear, activar y desactivar cuentas.`
+      : `¿Quitarle el permiso de administrador a ${user.fullName}? Seguirá como operador.`;
+    if (!window.confirm(question)) return;
+    setBusyId(user.id);
+    setActionError(null);
+    try {
+      await userApi.setAdministrator(user.id, administrator);
+      list.reload();
+    } catch (e) {
+      setActionError(errorMessage(e));
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   async function setEnabled(user: User, enabled: boolean) {
     if (!enabled && !window.confirm(`¿Desactivar la cuenta de ${user.fullName}? Ya no podrá iniciar sesión.`)) return;
     setBusyId(user.id);
@@ -157,7 +174,18 @@ export function UsersPage() {
                   <td className="mono" style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
                     {user.lastLoginAt ? relativeTime(user.lastLoginAt) : 'Nunca'}
                   </td>
-                  <td style={{ textAlign: 'right' }}>
+                  <td className="user-actions">
+                    {user.role === 'OPERATOR' && user.enabled && user.id !== me?.id ? (
+                      user.administrator ? (
+                        <button className="btn btn-outline btn-sm" disabled={busyId === user.id} onClick={() => void setAdministrator(user, false)}>
+                          <Icon name="remove_moderator" size={16} /> Quitar administrador
+                        </button>
+                      ) : (
+                        <button className="btn btn-outline-primary btn-sm" disabled={busyId === user.id} onClick={() => void setAdministrator(user, true)}>
+                          <Icon name="admin_panel_settings" size={16} /> Hacer administrador
+                        </button>
+                      )
+                    ) : null}
                     {user.enabled ? (
                       <button className="btn btn-outline btn-sm" disabled={user.id === me?.id || busyId === user.id} onClick={() => void setEnabled(user, false)}>
                         <Icon name="block" size={16} /> Desactivar
