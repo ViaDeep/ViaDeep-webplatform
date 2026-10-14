@@ -12,16 +12,47 @@ export function configureSession(hooks: { getToken: () => string | null; onUnaut
 /** Las rutas son relativas: en desarrollo las reenvía Vite y en producción el API Gateway. */
 export const http = axios.create({ baseURL: import.meta.env.VITE_API_URL ?? '', timeout: 15000 });
 
+/** Estado de la conexión con el backend según la última respuesta (lo muestran la barra superior y el menú). */
+export type Connection = { online: boolean; latencyMs: number | null };
+
+let connection: Connection = { online: true, latencyMs: null };
+const listeners = new Set<() => void>();
+
+function report(next: Connection) {
+  connection = next;
+  listeners.forEach((listener) => listener());
+}
+
+export const connectionStore = {
+  get: (): Connection => connection,
+  subscribe(listener: () => void): () => void {
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  },
+};
+
+const startedAt = new WeakMap<object, number>();
+
 http.interceptors.request.use((config) => {
   const token = getToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
+  startedAt.set(config, performance.now());
   return config;
 });
 
-http.interceptors.response.use(undefined, (error: AxiosError) => {
-  if (error.response?.status === 401 && getToken()) onUnauthorized();
-  return Promise.reject(error);
-});
+http.interceptors.response.use(
+  (response) => {
+    const start = startedAt.get(response.config);
+    report({ online: true, latencyMs: start === undefined ? connection.latencyMs : Math.round(performance.now() - start) });
+    return response;
+  },
+  (error: AxiosError) => {
+    if (!error.response) report({ online: false, latencyMs: null });
+    else report({ ...connection, online: true });
+    if (error.response?.status === 401 && getToken()) onUnauthorized();
+    return Promise.reject(error);
+  },
+);
 
 const MESSAGES: Record<number, string> = {
   401: 'Tu sesión expiró. Vuelve a iniciar sesión.',
