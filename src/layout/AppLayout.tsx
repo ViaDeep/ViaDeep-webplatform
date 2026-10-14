@@ -121,7 +121,7 @@ function Shell() {
           <div className="topbar-user">
             <div className="topbar-user-text">
               <strong>{user?.fullName}</strong>
-              <span className="mono">Operador municipal</span>
+              <span className="mono">{user?.administrator ? 'Administrador' : 'Operador municipal'}</span>
             </div>
             <span className="avatar">{initials(user?.fullName ?? '')}</span>
           </div>

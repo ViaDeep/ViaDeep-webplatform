@@ -42,6 +42,7 @@ async function checkServices(): Promise<{ services: ServiceState[]; checkedAt: D
 
 /** Pantalla 10 de Figma: "Configuración". */
 export function SettingsPage() {
+  const { user } = useSession();
   return (
     <div className="page">
       <div className="page-head">
@@ -56,10 +57,12 @@ export function SettingsPage() {
           <span className="chip settings-verified">
             <Icon name="verified_user" size={14} /> Sesión Verificada
           </span>
-          <Link to="/usuarios" className="btn btn-navy">
-            <Icon name="group" />
-            Gestión de usuarios
-          </Link>
+          {user?.administrator ? (
+            <Link to="/usuarios" className="btn btn-navy">
+              <Icon name="group" />
+              Gestión de usuarios
+            </Link>
+          ) : null}
         </div>
       </div>
       <div className="grid-2 settings-grid">
@@ -77,6 +80,8 @@ function ProfileCard() {
   const [fullName, setFullName] = useState(user?.fullName ?? '');
   const [phone, setPhone] = useState(user?.phone ?? '');
   const [documentNumber, setDocumentNumber] = useState(user?.documentNumber ?? '');
+  // Una persona tiene una sola cuenta de operador, identificada por su DNI: una vez registrado no se cambia.
+  const dniLocked = Boolean(user?.documentNumber);
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
   const [saving, setSaving] = useState(false);
   const changed = fullName.trim() !== (user?.fullName ?? '') || phone !== (user?.phone ?? '') || documentNumber !== (user?.documentNumber ?? '');
@@ -155,7 +160,7 @@ function ProfileCard() {
           <label className="field">
             <span className="label">Rol en plataforma</span>
             <span className="settings-role">
-              Operador municipal <Icon name="shield_person" size={18} fill />
+              {user?.administrator ? 'Administrador' : 'Operador municipal'} <Icon name="shield_person" size={18} fill />
             </span>
           </label>
           <label className="field">
@@ -170,7 +175,16 @@ function ProfileCard() {
           </label>
           <label className="field">
             <span className="label">DNI</span>
-            <input className="input" inputMode="numeric" maxLength={8} placeholder="12345678" value={documentNumber} onChange={(event) => setDocumentNumber(event.target.value.replace(/\D/g, ''))} />
+            <input
+              className="input"
+              inputMode="numeric"
+              maxLength={8}
+              placeholder="12345678"
+              value={documentNumber}
+              readOnly={dniLocked}
+              onChange={(event) => setDocumentNumber(event.target.value.replace(/\D/g, ''))}
+            />
+            {dniLocked ? <span className="hint">Tu DNI identifica tu cuenta y no se puede cambiar</span> : null}
           </label>
         </div>
         {message ? <p className={message.ok ? 'success-text' : 'error'}>{message.text}</p> : null}
