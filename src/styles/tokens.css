@@ -1,0 +1,49 @@
+/* Tokens de los mockups de Figma de ViaDeep (los mismos de la app móvil). */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --background: #f8f9ff;
+  --surface: #ffffff;
+  --surface-muted: #eff4ff;
+  --surface-blue: #e5eeff;
+  --navy: #0f2042;
+  --navy-mid: #12264c;
+  --primary: #0057c0;
+  --primary-bright: #006ff0;
+  --text: #000922;
+  --text-strong: #0b1c30;
+  --text-secondary: #45464e;
+  --text-muted: #75777f;
+  --border: #c5c6cf;
+  --border-faint: rgba(197, 198, 207, 0.4);
+  --success: #009c6b;
+  --success-surface: #e6f8f1;
+  --warning: #f59e0b;
+  --warning-surface: #fffbeb;
+  --warning-text: #92400e;
+  --danger: #ba1a1a;
+  --danger-surface: #ffdad6;
+  --radius: 8px;
+  --font: 'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; margin: 0; }
+body { font-family: var(--font); color: var(--text); background: var(--background); font-size: 14px; }
+button, input, select, textarea { font: inherit; }
+a { color: var(--primary); }
+.mono { font-family: var(--mono); }
+.label { font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em; color: var(--text-secondary); text-transform: uppercase; }
+.card { background: var(--surface); border: 1px solid var(--border-faint); border-radius: var(--radius); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 40px; padding: 0 16px; border-radius: var(--radius); border: 1px solid transparent; font-weight: 600; cursor: pointer; }
+.btn:disabled { opacity: 0.6; cursor: default; }
+.btn-navy { background: var(--navy); color: #fff; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-outline { background: var(--surface); color: var(--text); border-color: var(--border); }
+.btn-danger { background: var(--surface); color: var(--danger); border-color: rgba(186, 26, 26, 0.4); }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > span { font-size: 12px; font-weight: 600; }
+.input { height: 40px; padding: 0 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); color: var(--text); }
+textarea.input { height: auto; padding: 10px 12px; resize: vertical; }
+.error { color: var(--danger); font-size: 12px; font-weight: 500; }
