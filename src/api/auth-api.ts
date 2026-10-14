@@ -24,6 +24,9 @@ export type User = {
 
 export type UserFilters = { role?: Role; enabled?: boolean; q?: string; page?: number; size?: number };
 
+/** Operador activo que puede ser responsable de una incidencia. */
+export type OperatorSummary = { id: string; fullName: string; email: string };
+
 export type NewOperator = { fullName: string; email: string; documentNumber: string; password: string };
 
 export const authApi = {
@@ -74,6 +77,18 @@ export const userApi = {
 
   async get(id: string): Promise<User> {
     const { data } = await http.get<User>(`/auth/users/${id}`);
+    return data;
+  },
+
+  /** El administrador corrige el nombre y el celular de una cuenta; el correo y el DNI no cambian. */
+  async update(id: string, changes: { fullName: string; phone: string }): Promise<User> {
+    const { data } = await http.put<User>(`/auth/users/${id}`, { fullName: changes.fullName.trim(), phone: changes.phone.trim() || null });
+    return data;
+  },
+
+  /** Operadores activos, para elegir al responsable de una incidencia (lo puede pedir cualquier operador). */
+  async operators(): Promise<OperatorSummary[]> {
+    const { data } = await http.get<OperatorSummary[]>('/auth/operators');
     return data;
   },
 
