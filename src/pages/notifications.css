@@ -18,3 +18,13 @@
 .notif-time { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
 .notif-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 3px var(--surface-blue); flex-shrink: 0; }
 .notif-open { min-width: 120px; }
+
+@media (max-width: 640px) {
+  .notif-filter { margin-left: 0; width: 100%; }
+  .notif-row { flex-wrap: wrap; gap: 10px 12px; align-items: flex-start; }
+  .notif-text { flex-basis: calc(100% - 52px); }
+  .notif-line { white-space: normal; }
+  .notif-time { margin-left: 52px; align-self: center; }
+  .notif-dot { align-self: center; }
+  .notif-open { margin-left: auto; min-width: 0; }
+}
