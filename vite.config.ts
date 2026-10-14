@@ -20,6 +20,7 @@ export default defineConfig(({ mode }) => {
         '/auth': `http://${host}:8081`,
         '/incidents': `http://${host}:8082`,
         '/evidences': `http://${host}:8083`,
+        '/notifications': `http://${host}:8084`,
       },
     },
     test: { environment: 'jsdom', setupFiles: ['./src/test-setup.ts'] },

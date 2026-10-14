@@ -20,7 +20,7 @@ function describeBrowser(agent: string): string {
 
 type ServiceState = { name: string; up: boolean };
 
-/** Comprueba que respondan los tres microservicios (un 404 también cuenta como "responde"). */
+/** Comprueba que respondan los cuatro microservicios (un 404 también cuenta como "responde"). */
 async function checkServices(): Promise<{ services: ServiceState[]; checkedAt: Date }> {
   const probe = async (name: string, url: string) => {
     try {
@@ -35,6 +35,7 @@ async function checkServices(): Promise<{ services: ServiceState[]; checkedAt: D
     probe('Autenticación', '/auth/me'),
     probe('Incidencias', '/incidents?size=1'),
     probe('Evidencias', '/evidences/00000000-0000-0000-0000-000000000000/url'),
+    probe('Notificaciones', '/notifications/unread-count'),
   ]);
   return { services, checkedAt: new Date() };
 }
@@ -329,7 +330,7 @@ function PreferencesCard() {
           <strong>
             <Icon name="mail" size={18} /> Notificaciones por correo institucional
           </strong>
-          <p>Disponible cuando se active el servicio de notificaciones del backend.</p>
+          <p>Los avisos se muestran dentro de la plataforma. El envío por correo no forma parte del alcance actual.</p>
         </div>
         <label className="switch">
           <input type="checkbox" checked={false} disabled readOnly />

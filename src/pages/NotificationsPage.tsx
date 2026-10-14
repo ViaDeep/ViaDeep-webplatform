@@ -9,36 +9,30 @@ import { Pagination } from '@/ui/pagination';
 
 import './notifications.css';
 
-type Tab = 'all' | 'unread' | 'incidents' | 'assignments';
+type Tab = 'all' | 'unread' | 'duplicates';
 const PAGE_SIZE = 10;
 
 const TONES: Record<OperatorNotification['tone'], { color: string; background: string; border: string }> = {
   warning: { color: '#b45309', background: '#fffbeb', border: '#fcd9a5' },
   danger: { color: '#ba1a1a', background: '#ffe4e1', border: '#f6c2bd' },
-  info: { color: '#0057c0', background: '#e5eeff', border: '#bcd0f2' },
-  success: { color: '#009c6b', background: '#e6f8f1', border: '#b5e8d4' },
-  muted: { color: '#45464e', background: '#f1f3f7', border: '#dfe3ee' },
 };
-
-const ICONS: Record<OperatorNotification['kind'], string> = { NEW_REPORT: 'warning', ASSIGNED: 'assignment_ind', UPDATED: 'sync_alt' };
 
 /** Pantalla 9 de Figma: "Notificaciones". */
 export function NotificationsPage() {
-  const { notifications, isUnread, markRead, markAllRead, loading } = useNotifications();
+  const { notifications, unread: unreadCount, total, markRead, markAllRead, loading } = useNotifications();
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>('all');
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(0);
   const [today] = useState(() => new Date().toDateString());
 
-  const unread = notifications.filter(isUnread);
+  const unread = notifications.filter((notification) => !notification.read);
   const newToday = unread.filter((notification) => new Date(notification.at).toDateString() === today).length;
   const needle = query.trim().toLowerCase();
   const shown = notifications
     .filter((notification) => {
-      if (tab === 'unread') return isUnread(notification);
-      if (tab === 'incidents') return notification.kind !== 'ASSIGNED';
-      if (tab === 'assignments') return notification.kind === 'ASSIGNED';
+      if (tab === 'unread') return !notification.read;
+      if (tab === 'duplicates') return notification.duplicates > 0;
       return true;
     })
     .filter((notification) => !needle || [notification.code, notification.title, notification.highlight, notification.tag].some((value) => value?.toLowerCase().includes(needle)));
@@ -50,10 +44,9 @@ export function NotificationsPage() {
   }
 
   const tabs: { key: Tab; label: string; count?: number }[] = [
-    { key: 'all', label: 'Todas', count: notifications.length },
-    { key: 'unread', label: 'No leídas', count: unread.length },
-    { key: 'incidents', label: 'Incidencias' },
-    { key: 'assignments', label: 'Asignaciones' },
+    { key: 'all', label: 'Todas', count: total },
+    { key: 'unread', label: 'No leídas', count: unreadCount },
+    { key: 'duplicates', label: 'Posibles duplicados' },
   ];
 
   return (
@@ -70,7 +63,7 @@ export function NotificationsPage() {
           <span className="chip notif-today">
             <Icon name="bolt" size={16} /> {newToday} nuevas alertas hoy
           </span>
-          <button className="btn btn-outline notif-markall" onClick={markAllRead} disabled={unread.length === 0}>
+          <button className="btn btn-outline notif-markall" onClick={markAllRead} disabled={unreadCount === 0}>
             <Icon name="done_all" />
             Marcar todas como leídas
           </button>
@@ -110,11 +103,11 @@ export function NotificationsPage() {
         {!loading && pageItems.length === 0 ? <p className="card empty">No hay notificaciones en esta vista.</p> : null}
         {pageItems.map((notification) => {
           const tone = TONES[notification.tone];
-          const fresh = isUnread(notification);
+          const fresh = !notification.read;
           return (
             <div key={notification.id} className="card notif-row">
               <span className="notif-icon" style={{ color: tone.color, background: tone.background, borderColor: tone.border }}>
-                <Icon name={ICONS[notification.kind]} />
+                <Icon name={notification.duplicates > 0 ? 'content_copy' : 'warning'} />
               </span>
               <div className="notif-text">
                 <div className="notif-title">
@@ -150,7 +143,7 @@ export function NotificationsPage() {
           <Pagination page={page} size={PAGE_SIZE} total={shown.length} noun="notificaciones" onPage={setPage} />
         </div>
       ) : null}
-      <p className="hint">Se muestran los avisos de las 50 incidencias con actividad más reciente. Se actualizan cada minuto.</p>
+      <p className="hint">Avisos de nuevos reportes de los ciudadanos (se muestran los 100 más recientes). Se actualizan cada minuto.</p>
     </div>
   );
 }
