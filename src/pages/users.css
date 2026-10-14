@@ -1,0 +1,20 @@
+.users-new { height: 44px; }
+.users-filters { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 14px 16px; }
+.users-search { flex: 1; min-width: 240px; max-width: 360px; }
+.users-select { width: 200px; }
+.users-summary { margin-left: auto; display: flex; gap: 8px; align-items: center; font-size: 12px; color: var(--text-secondary); }
+.user-cell { display: flex; align-items: center; gap: 12px; }
+.user-cell strong { display: block; font-size: 14px; }
+.user-cell small { display: block; font-size: 12px; color: var(--text-secondary); }
+.user-avatar { width: 36px; height: 36px; border-radius: 4px; background: var(--navy); color: #fff; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.user-avatar.citizen { background: var(--surface-blue); color: var(--navy); }
+.role-badge { white-space: nowrap; display: inline-flex; padding: 4px 10px; border-radius: 3px; background: var(--navy); color: #fff; font-family: var(--mono); font-size: 11px; }
+.role-badge.citizen { background: var(--surface-blue); color: var(--primary); }
+.state-on { background: var(--success-surface); color: var(--success); }
+.state-on .dot { background: var(--success); }
+.state-off { background: #f1f3f7; color: var(--text-secondary); }
+.state-off .dot { background: var(--gray-dot); }
+tr.user-off td { color: var(--text-muted); }
+.users-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.required { color: var(--danger-bright); }
+.modal-icon { width: 36px; height: 36px; border-radius: 4px; background: var(--navy); color: #fff; display: inline-flex; align-items: center; justify-content: center; }
