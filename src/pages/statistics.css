@@ -6,3 +6,9 @@
 .stats-filter-actions { display: flex; gap: 8px; }
 .stats-filter-actions .btn-primary { min-width: 120px; }
 .stats-note { font-family: var(--mono); font-size: 11px; color: var(--text-secondary); display: flex; gap: 6px; align-items: center; margin-top: auto; }
+
+@media (max-width: 640px) {
+  .stats-filters { grid-template-columns: 1fr; }
+  .stats-filter-actions .btn-primary { flex: 1; }
+  .stats-export { height: 44px; font-size: 15px; }
+}
