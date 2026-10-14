@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import type { IncidentSummary } from '@/domain/incident';
 import { aggregate, change, topDistricts } from '@/domain/statistics';
-import { buildNotifications, initialReadState, isUnread } from '@/notifications/notifications';
+import type { ApiNotification } from '@/api/notification-api';
+import { toOperatorNotification } from '@/notifications/notifications';
 import { pageNumbers } from '@/ui/pagination';
 
 function incident(overrides: Partial<IncidentSummary> = {}): IncidentSummary {
@@ -55,31 +56,36 @@ describe('statistics', () => {
 });
 
 describe('notifications', () => {
-  it('genera registro, asignación y actualización, del más reciente al más antiguo', () => {
-    const notifications = buildNotifications([
-      incident({
-        status: 'IN_PROGRESS',
-        severity: 'MEDIUM',
-        assignee: 'Cuadrilla 1',
-        assignedAt: '2026-10-11T09:00:00Z',
-        updatedAt: '2026-10-12T09:00:00Z',
-      }),
-    ]);
-    expect(notifications.map((n) => n.kind)).toEqual(['UPDATED', 'ASSIGNED', 'NEW_REPORT']);
+  const base: ApiNotification = {
+    id: 'n1',
+    type: 'NEW_REPORT',
+    incidentId: '0001e1f5-aaaa-bbbb-cccc-000000000001',
+    incidentType: 'D40',
+    district: 'San Borja',
+    incidentStatus: 'PENDING',
+    possibleDuplicates: 0,
+    comment: null,
+    reportedAt: '2026-10-14T10:00:00Z',
+    title: 'Nuevo reporte registrado',
+    message: 'Bache reportado en San Borja.',
+    createdAt: '2026-10-14T10:00:01Z',
+    read: false,
+  };
+
+  it('arma la fila con el mismo código REP que la app móvil', () => {
+    const row = toOperatorNotification(base);
+    expect(row.code).toBe('REP-2026-LM-23381');
+    expect(row.message).toBe('Bache en');
+    expect(row.highlight).toBe('San Borja');
+    expect(row.tone).toBe('warning');
   });
 
-  it('no duplica el aviso cuando el único cambio fue la asignación', () => {
-    const notifications = buildNotifications([
-      incident({ assignee: 'Cuadrilla 1', assignedAt: '2026-10-11T09:00:00Z', updatedAt: '2026-10-11T09:00:00Z' }),
-    ]);
-    expect(notifications.map((n) => n.kind)).toEqual(['ASSIGNED', 'NEW_REPORT']);
-  });
-
-  it('considera leídos los avisos de más de 7 días', () => {
-    const state = initialReadState(new Date('2026-10-14T00:00:00Z'));
-    const [old] = buildNotifications([incident({ createdAt: '2026-10-01T00:00:00Z', updatedAt: '2026-10-01T00:00:00Z' })]);
-    const [recent] = buildNotifications([incident()]);
-    expect(isUnread(old!, state)).toBe(false);
-    expect(isUnread(recent!, state)).toBe(true);
+  it('marca los posibles duplicados', () => {
+    expect(toOperatorNotification({ ...base, possibleDuplicates: 1 }).tag).toBe('Posible duplicado');
+    expect(toOperatorNotification({ ...base, possibleDuplicates: 3, district: null })).toMatchObject({
+      tag: '3 posibles duplicados',
+      tone: 'danger',
+      highlight: 'Lima Metropolitana',
+    });
   });
 });
