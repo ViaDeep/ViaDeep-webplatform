@@ -16,6 +16,8 @@ export type User = {
   enabled: boolean;
   createdAt: string;
   lastLoginAt: string | null;
+  /** true mientras el operador tenga la contraseña temporal con la que lo dieron de alta. */
+  passwordChangeRequired: boolean;
 };
 
 export type UserFilters = { role?: Role; enabled?: boolean; q?: string; page?: number; size?: number };
