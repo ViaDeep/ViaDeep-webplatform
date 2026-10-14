@@ -13,6 +13,10 @@ import { useLoader } from '@/ui/use-loader';
 import './users.css';
 
 const ROLE_LABELS: Record<Role, string> = { OPERATOR: 'Operador municipal', CITIZEN: 'Ciudadano' };
+
+function roleLabel(user: User): string {
+  return user.administrator ? 'Administrador' : ROLE_LABELS[user.role];
+}
 const PAGE_SIZE = 10;
 
 type Filters = { q: string; role: string; enabled: string };
@@ -135,7 +139,7 @@ export function UsersPage() {
                       <span className={user.role === 'OPERATOR' ? 'user-avatar' : 'user-avatar citizen'}>{initials(user.fullName)}</span>
                       <span>
                         <strong>{user.fullName}</strong>
-                        <small>{user.id === me?.id ? 'Tu cuenta' : user.documentNumber ? `DNI ${user.documentNumber}` : ROLE_LABELS[user.role]}</small>
+                        <small>{user.id === me?.id ? 'Tu cuenta' : user.documentNumber ? `DNI ${user.documentNumber}` : roleLabel(user)}</small>
                       </span>
                     </span>
                   </td>
@@ -143,7 +147,7 @@ export function UsersPage() {
                     {user.email}
                   </td>
                   <td>
-                    <span className={user.role === 'OPERATOR' ? 'role-badge' : 'role-badge citizen'}>{ROLE_LABELS[user.role]}</span>
+                    <span className={user.role === 'OPERATOR' ? 'role-badge' : 'role-badge citizen'}>{roleLabel(user)}</span>
                   </td>
                   <td>
                     <span className={user.enabled ? 'badge state-on' : 'badge state-off'}>
@@ -190,6 +194,7 @@ export function UsersPage() {
 function NewUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }) {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [documentNumber, setDocumentNumber] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -199,6 +204,10 @@ function NewUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
       setError('Completa el nombre y el correo.');
       return;
     }
+    if (!/^\d{8}$/.test(documentNumber)) {
+      setError('El DNI debe tener 8 dígitos.');
+      return;
+    }
     if (password.length < 8) {
       setError('La contraseña temporal debe tener al menos 8 caracteres.');
       return;
@@ -206,7 +215,7 @@ function NewUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
     setSaving(true);
     setError(null);
     try {
-      await userApi.createOperator({ fullName, email, password });
+      await userApi.createOperator({ fullName, email, documentNumber, password });
       onCreated();
     } catch (e) {
       setError(errorMessage(e));
@@ -255,6 +264,13 @@ function NewUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
       <div className="users-two">
         <label className="field">
           <span className="field-label modal-label">
+            DNI <span className="required">*</span>
+          </span>
+          <input className="input" inputMode="numeric" maxLength={8} placeholder="12345678" value={documentNumber} onChange={(event) => setDocumentNumber(event.target.value.replace(/\D/g, ''))} />
+          <span className="hint">Una persona solo puede tener una cuenta de operador</span>
+        </label>
+        <label className="field">
+          <span className="field-label modal-label">
             Rol asignado <span className="required">*</span>
           </span>
           <select className="select" disabled>
@@ -262,17 +278,17 @@ function NewUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
           </select>
           <span className="hint">Los ciudadanos se registran desde la app</span>
         </label>
-        <label className="field">
-          <span className="field-label modal-label">
-            Contraseña temporal <span className="required">*</span>
-          </span>
-          <input className="input" type="text" autoComplete="new-password" placeholder="Mínimo 8 caracteres" value={password} onChange={(event) => setPassword(event.target.value)} />
-          <span className="hint">Compártela con la persona por un canal seguro</span>
-        </label>
       </div>
+      <label className="field">
+        <span className="field-label modal-label">
+          Contraseña temporal <span className="required">*</span>
+        </span>
+        <input className="input" type="text" autoComplete="new-password" placeholder="Mínimo 8 caracteres" value={password} onChange={(event) => setPassword(event.target.value)} />
+        <span className="hint">Compártela con la persona por un canal seguro</span>
+      </label>
       <div className="notice">
         <Icon name="verified_user" />
-        <span>Usa el correo institucional de la persona. La contraseña es temporal: el nuevo operador deberá cambiarla la primera vez que ingrese.</span>
+        <span>Usa el correo institucional y el DNI de la persona. La contraseña es temporal: el nuevo operador deberá cambiarla la primera vez que ingrese.</span>
       </div>
       {error ? <p className="error">{error}</p> : null}
     </Modal>
