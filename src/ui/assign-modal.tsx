@@ -7,16 +7,16 @@ import { reportCode, SEVERITY_LABELS, TYPE_LABELS, type IncidentSummary } from '
 
 import { Icon } from './badges';
 import { Modal } from './modal';
+import { OperatorSelect } from './operator-select';
 
 type AssignModalProps = {
   incident: IncidentSummary;
-  suggestions: string[];
   onClose: () => void;
   onAssigned: () => void;
 };
 
 /** Modal "Asignar Incidencia" de la pantalla 6 de Figma (también la usa "Derivar" en el detalle). */
-export function AssignModal({ incident, suggestions, onClose, onAssigned }: AssignModalProps) {
+export function AssignModal({ incident, onClose, onAssigned }: AssignModalProps) {
   const [assignee, setAssignee] = useState(incident.assignee ?? '');
   const [area, setArea] = useState(incident.assignedArea ?? MUNICIPAL_AREAS[0]);
   const [note, setNote] = useState('');
@@ -26,7 +26,7 @@ export function AssignModal({ incident, suggestions, onClose, onAssigned }: Assi
 
   async function confirm() {
     if (!assignee.trim()) {
-      setError('Indica el responsable técnico.');
+      setError('Selecciona un operador disponible como responsable.');
       return;
     }
     setSaving(true);
@@ -70,20 +70,7 @@ export function AssignModal({ incident, suggestions, onClose, onAssigned }: Assi
         <span className="field-label modal-label">
           <Icon name="person" size={16} /> Responsable Técnico Asignado
         </span>
-        <input
-          className="input"
-          list="assignee-suggestions"
-          placeholder="Ej. Ing. Carlos Mendoza - Inspector Vial"
-          value={assignee}
-          maxLength={120}
-          onChange={(event) => setAssignee(event.target.value)}
-          autoFocus
-        />
-        <datalist id="assignee-suggestions">
-          {suggestions.map((value) => (
-            <option key={value} value={value} />
-          ))}
-        </datalist>
+        <OperatorSelect value={assignee} onChange={setAssignee} emptyLabel="Selecciona un operador" autoFocus />
       </label>
       <label className="field">
         <span className="field-label modal-label">

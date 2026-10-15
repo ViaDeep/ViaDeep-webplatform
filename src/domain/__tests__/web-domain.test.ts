@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { IncidentSummary } from '@/domain/incident';
+import { assigneeOptions } from '@/domain/assignment';
 import { aggregate, change, topDistricts } from '@/domain/statistics';
 import type { ApiNotification } from '@/api/notification-api';
 import { toOperatorNotification } from '@/notifications/notifications';
@@ -87,5 +88,16 @@ describe('notifications', () => {
       tone: 'danger',
       highlight: 'Lima Metropolitana',
     });
+  });
+});
+
+describe('assigneeOptions', () => {
+  it('ofrece los operadores activos en orden alfabético y sin repetir', () => {
+    expect(assigneeOptions([{ fullName: 'Rosa Quispe' }, { fullName: 'Ana Ccori' }, { fullName: 'Rosa Quispe' }], null)).toEqual(['Ana Ccori', 'Rosa Quispe']);
+  });
+
+  it('mantiene al responsable actual aunque ya no esté en la lista', () => {
+    expect(assigneeOptions([{ fullName: 'Ana Ccori' }], 'Ing. Carlos Mendoza')).toEqual(['Ing. Carlos Mendoza', 'Ana Ccori']);
+    expect(assigneeOptions([{ fullName: 'Ana Ccori' }], 'Ana Ccori')).toEqual(['Ana Ccori']);
   });
 });

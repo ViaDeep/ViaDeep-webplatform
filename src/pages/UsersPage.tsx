@@ -28,6 +28,7 @@ export function UsersPage() {
   const [filters, setFilters] = useState<Filters>(draft);
   const [page, setPage] = useState(0);
   const [creating, setCreating] = useState(false);
+  const [editing, setEditing] = useState<User | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
 
@@ -175,6 +176,9 @@ export function UsersPage() {
                     {user.lastLoginAt ? relativeTime(user.lastLoginAt) : 'Nunca'}
                   </td>
                   <td className="user-actions">
+                    <button className="btn btn-outline btn-sm" disabled={busyId === user.id} onClick={() => setEditing(user)}>
+                      <Icon name="edit" size={16} /> Editar
+                    </button>
                     {user.role === 'OPERATOR' && user.enabled && user.id !== me?.id ? (
                       user.administrator ? (
                         <button className="btn btn-outline btn-sm" disabled={busyId === user.id} onClick={() => void setAdministrator(user, false)}>
@@ -204,6 +208,17 @@ export function UsersPage() {
         </div>
         {list.data ? <Pagination page={page} size={PAGE_SIZE} total={list.data.totalItems} noun="usuarios registrados" onPage={setPage} /> : null}
       </div>
+
+      {editing ? (
+        <EditUserModal
+          user={editing}
+          onClose={() => setEditing(null)}
+          onSaved={() => {
+            setEditing(null);
+            list.reload();
+          }}
+        />
+      ) : null}
 
       {creating ? (
         <NewUserModal
@@ -317,6 +332,85 @@ function NewUserModal({ onClose, onCreated }: { onClose: () => void; onCreated: 
       <div className="notice">
         <Icon name="verified_user" />
         <span>Usa el correo institucional y el DNI de la persona. La contraseña es temporal: el nuevo operador deberá cambiarla la primera vez que ingrese.</span>
+      </div>
+      {error ? <p className="error">{error}</p> : null}
+    </Modal>
+  );
+}
+
+/** El administrador corrige el nombre y el celular de una cuenta. El correo y el DNI identifican a la persona y no cambian. */
+function EditUserModal({ user, onClose, onSaved }: { user: User; onClose: () => void; onSaved: () => void }) {
+  const [fullName, setFullName] = useState(user.fullName);
+  const [phone, setPhone] = useState(user.phone ?? '');
+  const [error, setError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  async function save() {
+    if (!fullName.trim()) {
+      setError('Ingresa el nombre completo.');
+      return;
+    }
+    if (phone && !/^9\d{8}$/.test(phone)) {
+      setError('El celular debe tener 9 dígitos y empezar con 9.');
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      await userApi.update(user.id, { fullName, phone });
+      onSaved();
+    } catch (e) {
+      setError(errorMessage(e));
+      setSaving(false);
+    }
+  }
+
+  return (
+    <Modal
+      onClose={onClose}
+      icon={
+        <span className="modal-icon">
+          <Icon name="edit" />
+        </span>
+      }
+      title="Editar Usuario"
+      subtitle="Corregir los datos básicos de la cuenta"
+      footer={
+        <>
+          <button className="btn btn-outline" onClick={onClose}>
+            Cancelar
+          </button>
+          <button className="btn btn-navy" onClick={() => void save()} disabled={saving}>
+            <Icon name="check" />
+            {saving ? 'Guardando…' : 'Guardar cambios'}
+          </button>
+        </>
+      }
+    >
+      <label className="field">
+        <span className="field-label modal-label">
+          Nombre completo <span className="required">*</span>
+        </span>
+        <input className="input" maxLength={120} value={fullName} onChange={(event) => setFullName(event.target.value)} autoFocus />
+      </label>
+      <label className="field">
+        <span className="field-label modal-label">Celular</span>
+        <input className="input" inputMode="numeric" maxLength={9} placeholder="987654321" value={phone} onChange={(event) => setPhone(event.target.value.replace(/\D/g, ''))} />
+        <span className="hint">Opcional. 9 dígitos, empieza con 9</span>
+      </label>
+      <div className="users-two">
+        <label className="field">
+          <span className="field-label modal-label">Correo</span>
+          <input className="input" value={user.email} disabled />
+        </label>
+        <label className="field">
+          <span className="field-label modal-label">DNI</span>
+          <input className="input" value={user.documentNumber ?? 'No registrado'} disabled />
+        </label>
+      </div>
+      <div className="notice">
+        <Icon name="info" />
+        <span>El correo y el DNI identifican a la persona y no se pueden cambiar.</span>
       </div>
       {error ? <p className="error">{error}</p> : null}
     </Modal>
