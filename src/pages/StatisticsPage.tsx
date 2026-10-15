@@ -181,6 +181,16 @@ function StatisticsContent({ current, previous, partial }: Awaited<ReturnType<ty
   const districts = topDistricts(current);
   const maxDistrict = districts[0]?.[1] ?? 0;
 
+  if (current.total === 0) {
+    return (
+      <div className="card stats-empty">
+        <Icon name="query_stats" size={40} />
+        <strong>No hay datos disponibles para generar estadísticas</strong>
+        <span>No se registraron incidencias en este periodo o con estos filtros. Prueba con un periodo más amplio.</span>
+      </div>
+    );
+  }
+
   return (
     <>
       {partial ? <p className="hint">Con estos filtros se calculó sobre las 1000 incidencias más recientes.</p> : null}
