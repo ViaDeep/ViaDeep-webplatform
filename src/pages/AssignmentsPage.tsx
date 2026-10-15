@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { incidentApi, type IncidentFilters } from '@/api/incident-api';
-import { knownAssignees } from '@/domain/assignment';
 import { reportCode, TYPE_ICONS, TYPE_LABELS, type IncidentSummary } from '@/domain/incident';
 import { AssignModal } from '@/ui/assign-modal';
 import { Icon, SeverityBadge, StatusBadge } from '@/ui/badges';
@@ -22,17 +21,15 @@ type View = keyof typeof VIEWS;
 const PAGE_SIZE = 10;
 
 async function loadCounters() {
-  const [unassigned, assigned, inProgress, recentAssigned] = await Promise.all([
+  const [unassigned, assigned, inProgress] = await Promise.all([
     incidentApi.search({ assigned: false, status: 'PENDING', size: 1 }),
     incidentApi.search({ assigned: true, size: 1 }),
     incidentApi.search({ status: 'IN_PROGRESS', size: 1 }),
-    incidentApi.search({ assigned: true, sort: 'updatedAt', size: 100 }),
   ]);
   return {
     unassigned: unassigned.totalItems,
     assigned: assigned.totalItems,
     inProgress: inProgress.totalItems,
-    suggestions: knownAssignees(recentAssigned.items.map((incident) => incident.assignee)),
   };
 }
 
@@ -199,7 +196,6 @@ export function AssignmentsPage() {
       {assigning ? (
         <AssignModal
           incident={assigning}
-          suggestions={counters.data?.suggestions ?? []}
           onClose={() => setAssigning(null)}
           onAssigned={() => {
             setAssigning(null);

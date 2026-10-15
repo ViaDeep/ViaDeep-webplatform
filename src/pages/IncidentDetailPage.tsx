@@ -24,6 +24,7 @@ import { useSession } from '@/session/session';
 import { AssignModal } from '@/ui/assign-modal';
 import { Icon } from '@/ui/badges';
 import { STATUS_COLORS } from '@/ui/colors';
+import { OperatorSelect } from '@/ui/operator-select';
 import { useLoader } from '@/ui/use-loader';
 
 import './incident-detail.css';
@@ -114,7 +115,6 @@ export function IncidentDetailPage() {
       {deriving ? (
         <AssignModal
           incident={incident}
-          suggestions={[]}
           onClose={() => setDeriving(false)}
           onAssigned={() => {
             setDeriving(false);
@@ -293,7 +293,7 @@ function ActionsCard({ incident, onSaved }: { incident: IncidentDetail; onSaved:
     const assignmentChanged = assignee.trim() !== (incident.assignee ?? '') || area !== (incident.assignedArea ?? '');
     if (assignmentChanged) {
       if (!assignee.trim() || !area) {
-        setError('Para asignar indica el responsable y el área.');
+        setError('Para asignar elige un operador disponible y el área.');
         return;
       }
       steps.push(() => incidentApi.assign(incident.id, { assignee, area, note: notes }));
@@ -357,7 +357,7 @@ function ActionsCard({ incident, onSaved }: { incident: IncidentDetail; onSaved:
         </label>
         <label className="field">
           <span className="label">Responsable / cuadrilla asignada</span>
-          <input className="input" placeholder="Sin asignar" value={assignee} maxLength={120} onChange={(event) => setAssignee(event.target.value)} />
+          <OperatorSelect value={assignee} onChange={setAssignee} emptyLabel="Sin asignar" />
         </label>
         <label className="field">
           <span className="label">Área municipal</span>

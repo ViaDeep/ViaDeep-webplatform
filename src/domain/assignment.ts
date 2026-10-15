@@ -8,9 +8,13 @@ export const MUNICIPAL_AREAS = [
   'Empresa Municipal Administradora de Peaje (EMAPE)',
 ] as const;
 
-/** Responsables ya usados en otras asignaciones, sin repetir y en orden alfabético (para sugerirlos). */
-export function knownAssignees(values: (string | null)[]): string[] {
-  return [...new Set(values.filter((value): value is string => Boolean(value?.trim())).map((value) => value.trim()))].sort((a, b) =>
-    a.localeCompare(b, 'es'),
-  );
+/**
+ * Nombres que se ofrecen como responsable: los operadores activos en orden alfabético. Si la incidencia ya tenía un
+ * responsable que no está en la lista (una asignación antigua escrita a mano o un operador desactivado), se mantiene
+ * al inicio para no perderlo al guardar otros cambios.
+ */
+export function assigneeOptions(operators: { fullName: string }[], current: string | null): string[] {
+  const names = [...new Set(operators.map((operator) => operator.fullName.trim()).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'es'));
+  const kept = current?.trim();
+  return kept && !names.includes(kept) ? [kept, ...names] : names;
 }
