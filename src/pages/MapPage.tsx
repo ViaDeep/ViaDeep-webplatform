@@ -89,7 +89,7 @@ export function MapPage() {
       if (focus) all.items.unshift(focus);
     }
     return all;
-  }, `${windowDays}:${focusId ?? ''}`);
+  }, `${windowDays}:${focusId ?? ''}`, true);
 
   const incidents = useMemo(() => data?.items ?? [], [data]);
   const visible = useMemo(() => incidents.filter((incident) => passes(incident, filters)), [incidents, filters]);

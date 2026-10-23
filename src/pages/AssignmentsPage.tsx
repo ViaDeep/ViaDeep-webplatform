@@ -41,8 +41,8 @@ export function AssignmentsPage() {
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(0);
   const [assigning, setAssigning] = useState<IncidentSummary | null>(null);
-  const counters = useLoader(loadCounters, 'counters');
-  const list = useLoader(() => incidentApi.search({ ...VIEWS[view].filters, page, size: PAGE_SIZE }), `${view}:${page}`);
+  const counters = useLoader(loadCounters, 'counters', true);
+  const list = useLoader(() => incidentApi.search({ ...VIEWS[view].filters, page, size: PAGE_SIZE }), `${view}:${page}`, true);
 
   const needle = query.trim().toLowerCase();
   const rows = (list.data?.items ?? []).filter(

@@ -1,11 +1,15 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
 import { notificationApi } from '@/api/notification-api';
+import { announceDataChanged } from '@/live/data-changed';
 import { useSession } from '@/session/session';
 
 import { toOperatorNotification, type OperatorNotification } from './notifications';
 
-const REFRESH_MS = 60_000;
+/** Cada cuánto se consultan avisos nuevos: un reporte enviado desde la app aparece en segundos. */
+const REFRESH_MS = 5_000;
+/** Cuánto queda en pantalla la alerta de un reporte nuevo. */
+const ALERT_MS = 8_000;
 /** Avisos que se cargan para la pantalla de notificaciones (máximo de una página del servicio). */
 const LOADED = 100;
 
@@ -20,6 +24,9 @@ type NotificationsValue = {
   markRead: (id: string) => void;
   markAllRead: () => void;
   refresh: () => Promise<void>;
+  /** Reportes que llegaron mientras la plataforma estaba abierta, para la alerta emergente. */
+  alerts: OperatorNotification[];
+  dismissAlert: (id: string) => void;
   preferences: Preferences;
   setPreferences: (preferences: Preferences) => void;
 };
@@ -49,24 +56,38 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   const [snapshot, setSnapshot] = useState<Snapshot>({ notifications: [], unread: 0, total: 0 });
   const [loading, setLoading] = useState(true);
   const [preferences, setPreferencesState] = useState<Preferences>(() => loadPreferences(prefsKey));
+  const [alerts, setAlerts] = useState<OperatorNotification[]>([]);
+  const known = useRef<Set<string> | null>(null);
+
+  const dismissAlert = useCallback((id: string) => setAlerts((current) => current.filter((alert) => alert.id !== id)), []);
 
   const refresh = useCallback(async () => {
     try {
-      setSnapshot(await fetchSnapshot());
+      const next = await fetchSnapshot();
+      const seen = known.current;
+      known.current = new Set(next.notifications.map((notification) => notification.id));
+      setSnapshot(next);
+      // La primera carga solo registra lo que ya había; desde ahí, cada aviso nuevo dispara la alerta.
+      const fresh = seen ? next.notifications.filter((notification) => !seen.has(notification.id) && !notification.read) : [];
+      if (fresh.length > 0) {
+        announceDataChanged();
+        setAlerts((current) => [...fresh, ...current].slice(0, 3));
+        fresh.forEach((notification) => window.setTimeout(() => dismissAlert(notification.id), ALERT_MS));
+      }
     } catch {
-      // Se reintenta en el siguiente ciclo; la barra superior ya muestra si no hay conexión.
+      // Se reintenta en el siguiente ciclo; la plataforma ya avisa si no hay conexión.
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [dismissAlert]);
 
   useEffect(() => {
-    fetchSnapshot()
-      .then(setSnapshot)
-      .catch(() => undefined)
-      .finally(() => setLoading(false));
+    const first = window.setTimeout(() => void refresh(), 0);
     const timer = window.setInterval(() => void refresh(), REFRESH_MS);
-    return () => window.clearInterval(timer);
+    return () => {
+      window.clearTimeout(first);
+      window.clearInterval(timer);
+    };
   }, [refresh]);
 
   const value = useMemo<NotificationsValue>(
@@ -89,6 +110,8 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
         notificationApi.markAllRead().catch(() => void refresh());
       },
       refresh,
+      alerts: preferences.onScreen ? alerts : [],
+      dismissAlert,
       preferences,
       setPreferences: (next) => {
         setPreferencesState(next);
@@ -99,7 +122,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
         }
       },
     }),
-    [snapshot, loading, preferences, refresh, prefsKey],
+    [snapshot, loading, preferences, refresh, prefsKey, alerts, dismissAlert],
   );
 
   return <NotificationsContext.Provider value={value}>{children}</NotificationsContext.Provider>;

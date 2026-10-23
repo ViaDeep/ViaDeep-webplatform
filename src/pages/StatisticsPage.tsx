@@ -61,7 +61,7 @@ async function loadStatistics(filters: Filters) {
 export function StatisticsPage() {
   const [draft, setDraft] = useState<Filters>({ days: 30, district: '', type: '', status: '' });
   const [filters, setFilters] = useState<Filters>(draft);
-  const { data, error, reload } = useLoader(() => loadStatistics(filters), JSON.stringify(filters));
+  const { data, error, reload } = useLoader(() => loadStatistics(filters), JSON.stringify(filters), true);
 
   function exportReport() {
     if (!data) return;
