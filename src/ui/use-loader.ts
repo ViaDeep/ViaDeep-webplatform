@@ -1,11 +1,15 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { errorMessage } from '@/api/http';
+import { onDataChanged } from '@/live/data-changed';
 
 export type Loaded<T> = { data: T | null; error: string | null; loading: boolean; reload: () => void };
 
-/** Carga datos al montar y cada vez que cambia `key`; `reload` vuelve a pedirlos sin borrar lo que ya se ve. */
-export function useLoader<T>(load: () => Promise<T>, key: string): Loaded<T> {
+/**
+ * Carga datos al montar y cada vez que cambia `key`; `reload` vuelve a pedirlos sin borrar lo que ya se ve.
+ * Con `live`, también los vuelve a pedir apenas llega un reporte nuevo.
+ */
+export function useLoader<T>(load: () => Promise<T>, key: string, live = false): Loaded<T> {
   const [state, setState] = useState<{ key: string; data: T | null; error: string | null; done: boolean }>({
     key,
     data: null,
@@ -28,6 +32,7 @@ export function useLoader<T>(load: () => Promise<T>, key: string): Loaded<T> {
   }, [key, version]);
 
   const reload = useCallback(() => setVersion((value) => value + 1), []);
+  useEffect(() => (live ? onDataChanged(reload) : undefined), [live, reload]);
   const stale = state.key !== key;
   return { data: state.data, error: stale ? null : state.error, loading: stale || !state.done, reload };
 }
