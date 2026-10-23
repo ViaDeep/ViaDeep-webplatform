@@ -3,6 +3,7 @@ import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { connectionStore } from '@/api/http';
 import { initials } from '@/domain/incident';
+import { NewReportAlerts } from '@/notifications/new-report-alerts';
 import { NotificationsProvider, useNotifications } from '@/notifications/notifications-context';
 import { useSession } from '@/session/session';
 import { Icon } from '@/ui/badges';
@@ -103,14 +104,6 @@ function Shell() {
           </a>
         </nav>
         <div className="topbar-right">
-          <div className={connection.online ? 'net-pill' : 'net-pill off'} title="Estado de la conexión con el backend">
-            <span className="dot" />
-            <span className="mono">{connection.online ? 'EN LÍNEA' : 'SIN CONEXIÓN'}</span>
-            {connection.online && connection.latencyMs !== null ? <span className="mono net-ms">{connection.latencyMs}ms</span> : null}
-          </div>
-          <button className="icon-btn topbar-extra" title="Mapa SIG" onClick={() => navigate('/mapa')}>
-            <Icon name="dns" />
-          </button>
           <button className="icon-btn" title="Notificaciones" onClick={() => navigate('/notificaciones')}>
             <Icon name="notifications" />
             {unread > 0 ? <span className="bell-dot" /> : null}
@@ -168,11 +161,6 @@ function Shell() {
           })}
         </nav>
         <div className="side-bottom">
-          <div className="side-item static">
-            <Icon name="settings_input_antenna" style={{ color: connection.online ? 'var(--success)' : 'var(--danger)' }} />
-            <span>Estado de Red</span>
-            <span className={connection.online ? 'chip net-chip' : 'chip net-chip off'}>{connection.online ? 'Activo' : 'Sin conexión'}</span>
-          </div>
           <a className="side-item side-link" href="https://www.munlima.gob.pe/" target="_blank" rel="noreferrer">
             <Icon name="gavel" />
             <span>Normativa Vigente</span>
@@ -185,8 +173,15 @@ function Shell() {
       </aside>
 
       <main className="main">
+        {connection.online ? null : (
+          <div className="offline-banner" role="alert">
+            <Icon name="cloud_off" size={18} />
+            Sin conexión con el servidor. Los datos se actualizarán cuando vuelva.
+          </div>
+        )}
         <Outlet />
       </main>
+      <NewReportAlerts />
     </div>
   );
 }

@@ -36,6 +36,14 @@ const NEXT_STATUS_LABELS: Record<IncidentStatus, string> = {
   REJECTED: 'Rechazada (reporte infundado)',
 };
 
+/** Nota que queda en el historial cuando el operador cambia el estado. */
+const STATUS_NOTES: Record<IncidentStatus, string> = {
+  PENDING: 'Reporte devuelto a revisión por el operador.',
+  IN_PROGRESS: 'Reporte validado por el operador.',
+  RESOLVED: 'Incidencia resuelta por el operador.',
+  REJECTED: 'Reporte descartado por el operador.',
+};
+
 async function loadIncident(id: string) {
   const incident = await incidentApi.detail(id);
   const [photo, reporter] = await Promise.all([
@@ -263,19 +271,20 @@ function Item({ label, children }: { label: string; children: ReactNode }) {
 }
 
 function ActionsCard({ incident, onSaved }: { incident: IncidentDetail; onSaved: () => void }) {
-  const { user } = useSession();
-  const [severity, setSeverity] = useState<Severity | ''>(incident.severity ?? '');
-  const [status, setStatus] = useState<IncidentStatus>(incident.status);
-  const [assignee, setAssignee] = useState(incident.assignee ?? '');
-  const [area, setArea] = useState(incident.assignedArea ?? '');
-  const [notes, setNotes] = useState('');
+  const closed = incident.status === 'RESOLVED' || incident.status === 'REJECTED';
+  return (
+    <div className="actions-stack no-print">
+      <EvaluationCard incident={incident} closed={closed} onSaved={onSaved} />
+      <AssignmentCard incident={incident} closed={closed} onSaved={onSaved} />
+      {closed ? <p className="muted" style={{ fontSize: 13 }}>Este expediente está cerrado; ya no admite cambios.</p> : null}
+    </div>
+  );
+}
+
+function useSaver(onSaved: () => void) {
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
-  const closed = incident.status === 'RESOLVED' || incident.status === 'REJECTED';
-  const options = [incident.status, ...nextStatuses(incident.status)];
-
   async function run(steps: (() => Promise<void>)[]) {
-    if (steps.length === 0) return;
     setSaving(true);
     setError(null);
     try {
@@ -286,19 +295,23 @@ function ActionsCard({ incident, onSaved }: { incident: IncidentDetail; onSaved:
       setSaving(false);
     }
   }
+  return { error, setError, saving, run };
+}
+
+/** Qué tan grave es el daño y en qué etapa está el reporte. */
+function EvaluationCard({ incident, closed, onSaved }: { incident: IncidentDetail; closed: boolean; onSaved: () => void }) {
+  const [severity, setSeverity] = useState<Severity | ''>(incident.severity ?? '');
+  const [status, setStatus] = useState<IncidentStatus>(incident.status);
+  const { error, setError, saving, run } = useSaver(onSaved);
+  const options = [incident.status, ...nextStatuses(incident.status)];
 
   function save() {
     const steps: (() => Promise<void>)[] = [];
     if (severity && severity !== incident.severity) steps.push(() => incidentApi.assignSeverity(incident.id, severity));
-    const assignmentChanged = assignee.trim() !== (incident.assignee ?? '') || area !== (incident.assignedArea ?? '');
-    if (assignmentChanged) {
-      if (!assignee.trim() || !area) {
-        setError('Para asignar elige un operador disponible y el área.');
-        return;
-      }
-      steps.push(() => incidentApi.assign(incident.id, { assignee, area, note: notes }));
+    if (status !== incident.status) {
+      if (status === 'REJECTED' && !window.confirm('¿Rechazar este reporte como infundado? El ciudadano verá el estado "Rechazado".')) return;
+      steps.push(() => incidentApi.changeStatus(incident.id, status, STATUS_NOTES[status]));
     }
-    if (status !== incident.status) steps.push(() => incidentApi.changeStatus(incident.id, status, notes));
     if (steps.length === 0) {
       setError('No hay cambios por guardar.');
       return;
@@ -306,33 +319,13 @@ function ActionsCard({ incident, onSaved }: { incident: IncidentDetail; onSaved:
     void run(steps);
   }
 
-  function validate() {
-    const steps: (() => Promise<void>)[] = [];
-    if (severity && severity !== incident.severity) steps.push(() => incidentApi.assignSeverity(incident.id, severity));
-    steps.push(() => incidentApi.changeStatus(incident.id, 'IN_PROGRESS', notes || 'Reporte validado por el operador.'));
-    void run(steps);
-  }
-
-  function reject() {
-    if (!window.confirm('¿Rechazar este reporte como infundado? El ciudadano verá el estado "Rechazado".')) return;
-    void run([() => incidentApi.changeStatus(incident.id, 'REJECTED', notes || 'Reporte descartado por el operador.')]);
-  }
-
-  const areas = area && !MUNICIPAL_AREAS.includes(area as (typeof MUNICIPAL_AREAS)[number]) ? [area, ...MUNICIPAL_AREAS] : MUNICIPAL_AREAS;
-
   return (
-    <section className="card card-pad actions no-print">
-      <div className="card-head" style={{ marginBottom: 12 }}>
-        <div className="card-title" style={{ fontSize: 15 }}>
-          <Icon name="tune" />
-          Acciones de Gestión y Despacho
-        </div>
-        <span className="mono" style={{ fontSize: 10, color: 'var(--primary)', textAlign: 'right' }}>
-          OPERADOR
-          <br />
-          MUNICIPAL
-        </span>
+    <section className="card card-pad actions">
+      <div className="card-title" style={{ fontSize: 15 }}>
+        <Icon name="fact_check" />
+        Evaluación del reporte
       </div>
+      <p className="muted actions-help">Define qué tan grave es el daño y en qué etapa está. El ciudadano ve el cambio de estado en su app.</p>
       <fieldset disabled={closed || saving} className="actions-form">
         <label className="field">
           <span className="label">Nivel de severidad vial</span>
@@ -355,6 +348,47 @@ function ActionsCard({ incident, onSaved }: { incident: IncidentDetail; onSaved:
             ))}
           </select>
         </label>
+        {error ? <p className="error">{error}</p> : null}
+        <button type="button" className="btn btn-navy" onClick={save}>
+          <Icon name="save" />
+          {saving ? 'Guardando…' : 'Guardar evaluación'}
+        </button>
+      </fieldset>
+    </section>
+  );
+}
+
+/** Quién atiende el reporte, de qué área y con qué indicaciones. */
+function AssignmentCard({ incident, closed, onSaved }: { incident: IncidentDetail; closed: boolean; onSaved: () => void }) {
+  const { user } = useSession();
+  const [assignee, setAssignee] = useState(incident.assignee ?? '');
+  const [area, setArea] = useState(incident.assignedArea ?? '');
+  const [notes, setNotes] = useState('');
+  const { error, setError, saving, run } = useSaver(onSaved);
+
+  function save() {
+    const changed = assignee.trim() !== (incident.assignee ?? '') || area !== (incident.assignedArea ?? '') || notes.trim() !== '';
+    if (!changed) {
+      setError('No hay cambios por guardar.');
+      return;
+    }
+    if (!assignee.trim() || !area) {
+      setError('Elige el responsable y el área municipal.');
+      return;
+    }
+    void run([() => incidentApi.assign(incident.id, { assignee, area, note: notes })]);
+  }
+
+  const areas = area && !MUNICIPAL_AREAS.includes(area as (typeof MUNICIPAL_AREAS)[number]) ? [area, ...MUNICIPAL_AREAS] : MUNICIPAL_AREAS;
+
+  return (
+    <section className="card card-pad actions">
+      <div className="card-title" style={{ fontSize: 15 }}>
+        <Icon name="engineering" />
+        Asignación y seguimiento
+      </div>
+      <p className="muted actions-help">Indica quién atiende el reporte y desde qué área. Las observaciones quedan como nota de la asignación.</p>
+      <fieldset disabled={closed || saving} className="actions-form">
         <label className="field">
           <span className="label">Responsable / cuadrilla asignada</span>
           <OperatorSelect value={assignee} onChange={setAssignee} emptyLabel="Sin asignar" />
@@ -374,7 +408,7 @@ function ActionsCard({ incident, onSaved }: { incident: IncidentDetail; onSaved:
             className="input"
             rows={4}
             maxLength={500}
-            placeholder="Se guardan en el historial junto con el cambio de estado"
+            placeholder="Indicaciones para la cuadrilla (opcional)"
             value={notes}
             onChange={(event) => setNotes(event.target.value)}
           />
@@ -391,23 +425,11 @@ function ActionsCard({ incident, onSaved }: { incident: IncidentDetail; onSaved:
           </div>
         ) : null}
         {error ? <p className="error">{error}</p> : null}
-        <div className="actions-buttons">
-          <button type="button" className="btn btn-navy" onClick={save}>
-            <Icon name="save" />
-            {saving ? 'Guardando…' : 'Guardar cambios'}
-          </button>
-          <button type="button" className="btn btn-outline-primary" onClick={validate} disabled={incident.status !== 'PENDING'}>
-            <Icon name="check_circle" />
-            Validar
-          </button>
-        </div>
-        {incident.status === 'PENDING' ? (
-          <button type="button" className="btn-link-danger reject" onClick={reject}>
-            <Icon name="cancel" size={18} /> Descartar / Rechazar reporte infundado
-          </button>
-        ) : null}
+        <button type="button" className="btn btn-navy" onClick={save}>
+          <Icon name="save" />
+          {saving ? 'Guardando…' : 'Guardar asignación'}
+        </button>
       </fieldset>
-      {closed ? <p className="muted" style={{ fontSize: 13, marginTop: 12 }}>Este expediente está cerrado; ya no admite cambios.</p> : null}
     </section>
   );
 }

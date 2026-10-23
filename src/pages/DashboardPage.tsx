@@ -33,7 +33,7 @@ async function loadDashboard() {
 
 /** Pantalla 2 de Figma: "Dashboard del Operador Municipal". */
 export function DashboardPage() {
-  const { data, error, reload } = useLoader(loadDashboard, 'dashboard');
+  const { data, error, reload } = useLoader(loadDashboard, 'dashboard', true);
 
   return (
     <div className="page">
