@@ -19,6 +19,7 @@ import {
 import { aggregate, change, statusCount, topDistricts } from '@/domain/statistics';
 import { Icon } from '@/ui/badges';
 import { SEVERITY_COLORS } from '@/ui/colors';
+import { DamageTypeLabel } from '@/ui/damage-help';
 import { StatusBreakdown } from '@/ui/status-breakdown';
 import { useLoader } from '@/ui/use-loader';
 
@@ -278,7 +279,7 @@ function StatisticsContent({ current, previous, partial }: Awaited<ReturnType<ty
               return (
                 <div key={type}>
                   <div className="type-bar-head">
-                    <span>{TYPE_LABELS[type]}</span>
+                    <DamageTypeLabel type={type} />
                     <span className="mono">
                       <strong>{value}</strong> ({percent(value, current.total)})
                     </span>
