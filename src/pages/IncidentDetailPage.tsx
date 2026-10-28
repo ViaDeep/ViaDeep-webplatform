@@ -24,6 +24,7 @@ import { useSession } from '@/session/session';
 import { AssignModal } from '@/ui/assign-modal';
 import { Icon } from '@/ui/badges';
 import { STATUS_COLORS } from '@/ui/colors';
+import { DamageTypeLabel } from '@/ui/damage-help';
 import { OperatorSelect } from '@/ui/operator-select';
 import { useLoader } from '@/ui/use-loader';
 
@@ -199,7 +200,9 @@ function TechnicalCard({ incident, reporter }: { incident: IncidentDetail; repor
             ID {incident.id.slice(0, 8).toUpperCase()}
           </span>
         </div>
-        <Item label="Tipo de incidencia">{TYPE_LABELS[incident.type]}</Item>
+        <Item label="Tipo de incidencia">
+          <DamageTypeLabel type={incident.type} />
+        </Item>
         <Item label="Nivel de confianza IA">
           {confidence !== null ? (
             <div className="confidence">
