@@ -20,6 +20,7 @@ import {
 } from '@/domain/incident';
 import { Icon } from '@/ui/badges';
 import { SEVERITY_COLORS } from '@/ui/colors';
+import { DamageTypeLabel } from '@/ui/damage-help';
 import { IncidentMap, type BaseLayer } from '@/ui/incident-map';
 import { MARKER_LEGEND } from '@/ui/map-style';
 import { useLoader } from '@/ui/use-loader';
@@ -201,7 +202,7 @@ export function MapPage() {
                 {INCIDENT_TYPES.map((type) => (
                   <label key={type} className="checkbox map-check">
                     <input type="checkbox" checked={draft.types.includes(type)} onChange={() => setDraft({ ...draft, types: toggle(draft.types, type) })} />
-                    <span>{TYPE_LABELS[type]}</span>
+                    <DamageTypeLabel type={type} />
                     <span className="mono muted">{typeCount(type)}</span>
                   </label>
                 ))}
