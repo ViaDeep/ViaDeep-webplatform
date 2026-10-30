@@ -25,3 +25,13 @@ tr.user-off td { color: var(--text-muted); }
   .users-two { grid-template-columns: 1fr; }
   .users-new { width: 100%; }
 }
+
+/* Acciones de cada cuenta: Hacer administrador y Activar/Desactivar, alineadas a la derecha. */
+.user-actions {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.user-actions .btn + .btn {
+  margin-left: 8px;
+}

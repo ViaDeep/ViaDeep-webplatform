@@ -16,11 +16,18 @@ export type User = {
   enabled: boolean;
   createdAt: string;
   lastLoginAt: string | null;
+  /** true mientras el operador tenga la contraseña temporal con la que lo dieron de alta. */
+  passwordChangeRequired: boolean;
+  /** El encargado que designa la municipalidad: el único que crea, activa y desactiva cuentas. */
+  administrator: boolean;
 };
 
 export type UserFilters = { role?: Role; enabled?: boolean; q?: string; page?: number; size?: number };
 
-export type NewOperator = { fullName: string; email: string; password: string };
+/** Operador activo que puede ser responsable de una incidencia. */
+export type OperatorSummary = { id: string; fullName: string; email: string };
+
+export type NewOperator = { fullName: string; email: string; documentNumber: string; password: string };
 
 export const authApi = {
   async login(email: string, password: string): Promise<string> {
@@ -73,8 +80,25 @@ export const userApi = {
     return data;
   },
 
+  /** El administrador corrige el nombre y el celular de una cuenta; el correo y el DNI no cambian. */
+  async update(id: string, changes: { fullName: string; phone: string }): Promise<User> {
+    const { data } = await http.put<User>(`/auth/users/${id}`, { fullName: changes.fullName.trim(), phone: changes.phone.trim() || null });
+    return data;
+  },
+
+  /** Operadores activos, para elegir al responsable de una incidencia (lo puede pedir cualquier operador). */
+  async operators(): Promise<OperatorSummary[]> {
+    const { data } = await http.get<OperatorSummary[]>('/auth/operators');
+    return data;
+  },
+
   async setEnabled(id: string, enabled: boolean): Promise<User> {
     const { data } = await http.patch<User>(`/auth/users/${id}/status`, { enabled });
+    return data;
+  },
+
+  async setAdministrator(id: string, administrator: boolean): Promise<User> {
+    const { data } = await http.patch<User>(`/auth/users/${id}/administrator`, { administrator });
     return data;
   },
 
@@ -82,6 +106,7 @@ export const userApi = {
     await http.post('/auth/operators', {
       fullName: operator.fullName.trim(),
       email: operator.email.trim(),
+      documentNumber: operator.documentNumber.trim(),
       password: operator.password,
     });
   },

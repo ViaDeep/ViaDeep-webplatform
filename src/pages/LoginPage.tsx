@@ -20,7 +20,7 @@ export function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
 
-  if (user) return <Navigate to="/" replace />;
+  if (user) return <Navigate to={user.passwordChangeRequired ? '/cambiar-clave' : '/'} replace />;
 
   async function submit(event: FormEvent) {
     event.preventDefault();

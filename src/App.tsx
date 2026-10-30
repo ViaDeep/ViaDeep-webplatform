@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Outlet, Route, Routes } from 'react-router-dom
 
 import { AppLayout } from '@/layout/AppLayout';
 import { AssignmentsPage } from '@/pages/AssignmentsPage';
+import { ChangeTemporaryPasswordPage } from '@/pages/ChangeTemporaryPasswordPage';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { IncidentDetailPage } from '@/pages/IncidentDetailPage';
 import { IncidentsPage } from '@/pages/IncidentsPage';
@@ -16,7 +17,15 @@ import { SessionProvider, useSession } from '@/session/session';
 function RequireOperator() {
   const { loading, user } = useSession();
   if (loading) return <p style={{ padding: 24 }}>Cargando…</p>;
-  return user ? <Outlet /> : <Navigate to="/login" replace />;
+  if (!user) return <Navigate to="/login" replace />;
+  // Con contraseña temporal no se puede usar la plataforma hasta reemplazarla.
+  return user.passwordChangeRequired ? <Navigate to="/cambiar-clave" replace /> : <Outlet />;
+}
+
+/** Solo el administrador gestiona las cuentas; un operador que entre a /usuarios vuelve a Configuración. */
+function RequireAdministrator() {
+  const { user } = useSession();
+  return user?.administrator ? <Outlet /> : <Navigate to="/configuracion" replace />;
 }
 
 export default function App() {
@@ -25,6 +34,7 @@ export default function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/cambiar-clave" element={<ChangeTemporaryPasswordPage />} />
           <Route element={<RequireOperator />}>
             <Route element={<AppLayout />}>
               <Route index element={<DashboardPage />} />
@@ -33,7 +43,9 @@ export default function App() {
               <Route path="mapa" element={<MapPage />} />
               <Route path="asignaciones" element={<AssignmentsPage />} />
               <Route path="estadisticas" element={<StatisticsPage />} />
-              <Route path="usuarios" element={<UsersPage />} />
+              <Route element={<RequireAdministrator />}>
+                <Route path="usuarios" element={<UsersPage />} />
+              </Route>
               <Route path="notificaciones" element={<NotificationsPage />} />
               <Route path="configuracion" element={<SettingsPage />} />
             </Route>
