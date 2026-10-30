@@ -1,0 +1,85 @@
+/* Barra superior y menú lateral comunes a las pantallas web 2 a 10 de Figma. */
+.shell { min-height: 100vh; }
+.topbar { position: fixed; top: 0; left: 0; right: 0; height: 64px; z-index: 500; display: flex; align-items: center; gap: 20px; padding: 0 20px 0 24px; background: var(--surface); border-bottom: 1px solid var(--border-faint); }
+.topbar-brand { display: flex; align-items: center; gap: 12px; min-width: 0; flex-shrink: 1; }
+.topbar-brand > div { min-width: 0; }
+.topbar-title { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar-sub { font-size: 10px; letter-spacing: 0.08em; color: var(--text-secondary); margin-top: 2px; }
+.topbar-search { width: 220px; flex-shrink: 1; min-width: 160px; }
+.topbar-search .input { height: 36px; background: var(--background); font-size: 13px; }
+.topbar-nav { display: flex; gap: 22px; align-self: stretch; }
+.tab { display: flex; align-items: center; color: var(--text-secondary); font-size: 15px; border-bottom: 2px solid transparent; padding-top: 2px; white-space: nowrap; }
+.tab:hover { color: var(--text-strong); text-decoration: none; }
+.tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 500; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.net-pill { white-space: nowrap; flex-shrink: 0; display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 10px; border-radius: 4px; background: var(--surface-muted); border: 1px solid var(--border-faint); font-size: 11px; margin-right: 6px; }
+.net-pill .dot { background: var(--success); }
+.net-pill.off { background: var(--danger-surface); color: var(--danger); }
+.net-pill.off .dot { background: var(--danger-bright); }
+.net-ms { color: var(--text-muted); padding-left: 8px; border-left: 1px solid var(--border); }
+.bell-dot { position: absolute; top: 7px; right: 8px; width: 7px; height: 7px; border-radius: 50%; background: var(--danger-bright); border: 1px solid #fff; }
+.topbar-user { display: flex; align-items: center; gap: 10px; padding-left: 14px; margin-left: 6px; border-left: 1px solid var(--border-faint); }
+.topbar-user-text { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.25; }
+.topbar-user-text strong { font-size: 13px; max-width: 170px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar-user-text .mono { font-size: 10px; color: var(--text-secondary); }
+.avatar { width: 34px; height: 34px; border-radius: 50%; background: var(--surface-blue); color: var(--navy); border: 1px solid var(--primary); display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; flex-shrink: 0; }
+
+.sidebar { position: fixed; top: 64px; bottom: 0; left: 0; width: 256px; z-index: 400; display: flex; flex-direction: column; gap: 14px; padding: 18px 16px 16px; background: var(--background); border-right: 1px solid var(--border-faint); overflow-y: auto; }
+.org { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 4px; }
+.org-icon { width: 34px; height: 34px; border-radius: 4px; background: var(--surface-blue); color: var(--navy); display: inline-flex; align-items: center; justify-content: center; }
+.org-name { font-weight: 600; font-size: 14px; }
+.org-sub { font-size: 10px; color: var(--text-secondary); letter-spacing: 0.03em; margin-top: 2px; }
+.side-nav { display: flex; flex-direction: column; gap: 4px; margin-top: 6px; }
+.side-item { display: flex; align-items: center; gap: 14px; height: 40px; padding: 0 12px; border-radius: 4px; color: var(--text-strong); font-size: 14px; border: none; background: none; cursor: pointer; width: 100%; text-align: left; }
+.side-item:hover { background: var(--surface-muted); text-decoration: none; }
+.side-item .ms { color: var(--text-secondary); }
+.side-item.active { background: var(--surface-blue); color: var(--primary); font-weight: 600; }
+.side-item.active .ms { color: var(--primary); font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+.side-item.static { cursor: default; }
+.side-item.static:hover { background: none; }
+.side-count { margin-left: auto; background: var(--danger-surface); color: var(--danger); }
+.side-item.active .side-count { background: var(--primary); color: #fff; }
+.side-bottom { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--border-faint); display: flex; flex-direction: column; gap: 4px; }
+.net-chip { margin-left: auto; height: 22px; background: var(--success-surface); color: var(--success); }
+.net-chip.off { background: var(--danger-surface); color: var(--danger); }
+.side-item.logout, .side-item.logout .ms { color: var(--danger-bright); }
+
+.main { margin-left: 256px; padding-top: 64px; min-height: 100vh; }
+
+/* Elementos que solo aparecen en tablet y celular. */
+.menu-toggle, .sidebar-backdrop, .sidebar-search, .side-link { display: none; }
+
+@media (max-width: 1280px) {
+  .topbar-search { display: none; }
+}
+@media (max-width: 1100px) {
+  .topbar-nav, .topbar-user-text, .topbar-sub { display: none; }
+}
+/* Tablet: el menú lateral se vuelve un panel deslizable. */
+@media (max-width: 1024px) {
+  .topbar { gap: 10px; padding: 0 12px; }
+  .menu-toggle { display: inline-flex; color: var(--text-strong); flex-shrink: 0; }
+  .sidebar { transform: translateX(-100%); transition: transform 0.2s ease; box-shadow: none; width: 280px; max-width: 86vw; z-index: 600; }
+  .sidebar.open { transform: none; box-shadow: 0 12px 40px rgba(15, 32, 66, 0.25); }
+  .sidebar-backdrop { display: block; position: fixed; inset: 64px 0 0 0; z-index: 550; background: rgba(15, 32, 66, 0.35); }
+  .sidebar-search { display: block; }
+  .sidebar-search .input { height: 38px; background: var(--surface); font-size: 13px; }
+  .side-link { display: flex; }
+  .side-link:hover { text-decoration: none; }
+  .main { margin-left: 0; }
+}
+/* Celular */
+@media (max-width: 900px) {
+  .topbar-title-org { display: none; }
+}
+@media (max-width: 640px) {
+  .topbar-title { font-size: 15px; }
+  .net-ms, .topbar-extra { display: none; }
+  .topbar-brand { gap: 8px; }
+  .net-pill { padding: 0 8px; margin-right: 0; }
+  .topbar-user { padding-left: 8px; margin-left: 2px; }
+}
+@media (max-width: 380px) {
+  .net-pill .mono { display: none; }
+}

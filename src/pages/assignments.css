@@ -1,0 +1,23 @@
+.assign-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+.assign-counters { display: flex; gap: 10px; flex-wrap: wrap; }
+.counter { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px; border-radius: 4px; font-size: 13px; }
+.counter strong { font-family: var(--mono); font-size: 15px; }
+.counter.danger { background: var(--danger-surface); color: var(--danger); }
+.counter.danger .dot { background: var(--danger-bright); }
+.counter.info { background: var(--surface-blue); color: var(--primary); }
+.counter.info .dot { background: var(--primary); }
+.counter.success { background: var(--success-surface); color: var(--success); }
+.counter.success .dot { background: var(--success); }
+.assign-filters { display: flex; gap: 12px; align-items: center; padding: 14px 16px; flex-wrap: wrap; }
+.assign-search { flex: 1; min-width: 260px; max-width: 420px; }
+.assign-select { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary); }
+.assign-select .select { width: 220px; }
+.assignee { display: inline-flex; align-items: flex-start; gap: 6px; padding: 5px 10px; border-radius: 4px; background: var(--surface-muted); color: var(--primary); font-size: 13px; }
+.assignee small { display: block; color: var(--text-secondary); font-size: 11px; }
+.assignee.none { background: none; color: var(--text-muted); padding: 0; }
+
+@media (max-width: 640px) {
+  .assign-search { min-width: 0; max-width: none; flex-basis: 100%; }
+  .assign-select { flex-wrap: wrap; width: 100%; }
+  .assign-select .select { width: 100%; }
+}

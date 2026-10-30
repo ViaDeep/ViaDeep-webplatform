@@ -1,0 +1,30 @@
+.notif-today { height: 32px; font-size: 12px; background: var(--surface-blue); border: 1px solid #bcd0f2; }
+.notif-markall { height: 40px; font-size: 15px; }
+.notif-tabs { display: flex; align-items: center; gap: 6px; padding: 8px; flex-wrap: wrap; }
+.notif-tab { display: inline-flex; align-items: center; gap: 10px; height: 36px; padding: 0 14px; border: none; border-radius: 4px; background: none; cursor: pointer; font-size: 16px; color: var(--text-strong); }
+.notif-tab .count { background: var(--surface-blue); color: var(--primary); }
+.notif-tab.on { background: var(--navy); color: #fff; }
+.notif-tab.on .count { background: rgba(255, 255, 255, 0.18); color: #fff; }
+.notif-filter { margin-left: auto; width: 290px; }
+.notif-list { display: flex; flex-direction: column; gap: 10px; }
+.notif-row { display: flex; align-items: center; gap: 16px; padding: 14px 16px; }
+.notif-icon { width: 40px; height: 40px; border-radius: 4px; border: 1px solid; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.notif-text { flex: 1; min-width: 0; }
+.notif-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.notif-title strong { font-size: 15px; }
+.notif-line { font-size: 13px; color: var(--text-secondary); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.notif-line strong { color: var(--text-strong); font-weight: 500; }
+.notif-code { color: var(--primary); font-weight: 500; }
+.notif-time { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+.notif-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 3px var(--surface-blue); flex-shrink: 0; }
+.notif-open { min-width: 120px; }
+
+@media (max-width: 640px) {
+  .notif-filter { margin-left: 0; width: 100%; }
+  .notif-row { flex-wrap: wrap; gap: 10px 12px; align-items: flex-start; }
+  .notif-text { flex-basis: calc(100% - 52px); }
+  .notif-line { white-space: normal; }
+  .notif-time { margin-left: 52px; align-self: center; }
+  .notif-dot { align-self: center; }
+  .notif-open { margin-left: auto; min-width: 0; }
+}

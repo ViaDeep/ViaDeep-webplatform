@@ -1,0 +1,14 @@
+@import './dashboard.css';
+.stats-updated { cursor: pointer; height: 44px; color: var(--text-secondary); }
+.stats-export { height: 52px; font-size: 16px; padding: 0 20px; }
+.stats-filters { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)) auto; gap: 14px; align-items: end; padding: 16px; }
+@media (max-width: 1100px) { .stats-filters { grid-template-columns: 1fr 1fr; } }
+.stats-filter-actions { display: flex; gap: 8px; }
+.stats-filter-actions .btn-primary { min-width: 120px; }
+.stats-note { font-family: var(--mono); font-size: 11px; color: var(--text-secondary); display: flex; gap: 6px; align-items: center; margin-top: auto; }
+
+@media (max-width: 640px) {
+  .stats-filters { grid-template-columns: 1fr; }
+  .stats-filter-actions .btn-primary { flex: 1; }
+  .stats-export { height: 44px; font-size: 15px; }
+}
