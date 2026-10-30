@@ -40,9 +40,8 @@
 .reporter-dni { display: inline-flex; align-items: center; gap: 4px; background: var(--success-surface); color: var(--success); text-transform: none; font-family: var(--font); font-size: 12px; }
 
 .actions-form { border: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.actions-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
-.actions-buttons .btn-navy { flex: 1; }
-.reject { justify-content: center; font-size: 13px; text-align: center; }
+.actions-stack { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.actions-help { font-size: 13px; line-height: 1.45; margin: 6px 0 14px; }
 
 .timeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
 @media (max-width: 1100px) { .timeline { grid-template-columns: 1fr 1fr; } }

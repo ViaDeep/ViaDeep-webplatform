@@ -1,8 +1,9 @@
 import { Link } from 'react-router-dom';
 
 import { incidentApi } from '@/api/incident-api';
-import { formatDate, INCIDENT_TYPES, lastDays, percent, relativeTime, TYPE_LABELS, type Statistics } from '@/domain/incident';
+import { formatDate, INCIDENT_TYPES, lastDays, percent, relativeTime, type Statistics } from '@/domain/incident';
 import { Icon } from '@/ui/badges';
+import { DamageTypeLabel } from '@/ui/damage-help';
 import { IncidentMap } from '@/ui/incident-map';
 import { MARKER_LEGEND } from '@/ui/map-style';
 import { StatusBreakdown } from '@/ui/status-breakdown';
@@ -33,7 +34,7 @@ async function loadDashboard() {
 
 /** Pantalla 2 de Figma: "Dashboard del Operador Municipal". */
 export function DashboardPage() {
-  const { data, error, reload } = useLoader(loadDashboard, 'dashboard');
+  const { data, error, reload } = useLoader(loadDashboard, 'dashboard', true);
 
   return (
     <div className="page">
@@ -202,7 +203,7 @@ function DashboardContent({ stats, thisWeek, lastWeek, urgent, recent, loadedAt 
               return (
                 <div key={type}>
                   <div className="type-bar-head">
-                    <span>{TYPE_LABELS[type]}</span>
+                    <DamageTypeLabel type={type} />
                     <span className="mono">
                       <strong>{percent(value, stats.total).replace('.0%', '%')}</strong> ({value})
                     </span>

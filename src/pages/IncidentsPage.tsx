@@ -85,7 +85,7 @@ export function IncidentsPage() {
     const all = await incidentApi.searchAll(filters, 1000);
     const found = all.items.filter((incident) => matches(incident, applied.q));
     return { items: found.slice(page * size, (page + 1) * size), total: found.length, loadedAt: new Date() };
-  }, `${params.toString()}`);
+  }, `${params.toString()}`, true);
 
   function commit(filters: Filters, extra: Record<string, string> = {}) {
     const next = new URLSearchParams();
