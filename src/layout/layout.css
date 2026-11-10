@@ -56,7 +56,6 @@
 /* Celular */
 @media (max-width: 640px) {
   .topbar-title { font-size: 15px; }
-  .topbar-extra { display: none; }
   .topbar-brand { gap: 8px; }
   .topbar-user { padding-left: 8px; margin-left: 2px; }
 }

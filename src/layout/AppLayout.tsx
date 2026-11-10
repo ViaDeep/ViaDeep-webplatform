@@ -90,9 +90,6 @@ function Shell() {
             <Icon name="notifications" />
             {unread > 0 ? <span className="bell-dot" /> : null}
           </button>
-          <button className="icon-btn topbar-extra" title="Configuración" onClick={() => navigate('/configuracion')}>
-            <Icon name="tune" />
-          </button>
           <div className="topbar-user">
             <div className="topbar-user-text">
               <strong>{user?.fullName}</strong>
