@@ -67,12 +67,7 @@ function Shell() {
         </button>
         <div className="topbar-brand">
           <Logo size={34} />
-          <div>
-            <div className="topbar-title">
-              ViaDeep
-            </div>
-            <div className="topbar-sub mono">SISTEMA INTEGRADO DE TELEMETRÍA VIAL</div>
-          </div>
+          <div className="topbar-title">ViaDeep</div>
         </div>
         <nav className="topbar-nav">
           <NavLink to="/" end className={({ isActive }) => (isActive || location.pathname !== '/mapa' ? 'tab active' : 'tab')}>

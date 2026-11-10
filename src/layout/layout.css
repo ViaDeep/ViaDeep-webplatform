@@ -2,10 +2,7 @@
 .shell { min-height: 100vh; }
 .topbar { position: fixed; top: 0; left: 0; right: 0; height: 64px; z-index: 500; display: flex; align-items: center; gap: 20px; padding: 0 20px 0 24px; background: var(--surface); border-bottom: 1px solid var(--border-faint); }
 .topbar-brand { display: flex; align-items: center; gap: 12px; min-width: 0; flex-shrink: 1; }
-.topbar-brand > div { min-width: 0; }
 .topbar-title { font-size: 16px; font-weight: 700; color: var(--text); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.topbar-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.topbar-sub { font-size: 10px; letter-spacing: 0.08em; color: var(--text-secondary); margin-top: 2px; }
 .topbar-nav { display: flex; gap: 22px; align-self: stretch; }
 .tab { display: flex; align-items: center; color: var(--text-secondary); font-size: 15px; border-bottom: 2px solid transparent; padding-top: 2px; white-space: nowrap; }
 .tab:hover { color: var(--text-strong); text-decoration: none; }
@@ -40,7 +37,7 @@
 .menu-toggle, .sidebar-backdrop, .side-link { display: none; }
 
 @media (max-width: 1100px) {
-  .topbar-nav, .topbar-user-text, .topbar-sub { display: none; }
+  .topbar-nav, .topbar-user-text { display: none; }
 }
 /* Tablet: el menú lateral se vuelve un panel deslizable. */
 @media (max-width: 1024px) {
