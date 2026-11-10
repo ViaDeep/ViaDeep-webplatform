@@ -107,8 +107,8 @@ function Shell() {
             <Icon name="location_city" />
           </span>
           <div>
-            <div className="org-name">ViaDeep Telemetría</div>
-            <div className="org-sub mono">Lima Metropolitana · MML</div>
+            <div className="org-name">ViaDeep</div>
+            <div className="org-sub mono">Lima Metropolitana</div>
           </div>
         </div>
         <nav className="side-nav">
