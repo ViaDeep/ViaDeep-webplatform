@@ -238,7 +238,7 @@ export function IncidentsPage() {
       <div className="card">
         <div className="table-title">
           <span className="dot" style={{ background: 'var(--primary)', width: 10, height: 10 }} />
-          <strong>Consola Maestra de Telemetría e Incidentes Viales</strong>
+          <strong>Consola Maestra de Incidentes Viales</strong>
           <span className="mono table-title-meta">
             Sincronización: <strong>{data ? `${formatTime(data.loadedAt.toISOString())}` : '—'}</strong>
           </span>
