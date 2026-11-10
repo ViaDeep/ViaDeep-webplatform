@@ -1,4 +1,4 @@
-import { useEffect, useState, useSyncExternalStore, type FormEvent } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { connectionStore } from '@/api/http';
@@ -42,7 +42,6 @@ function Shell() {
   const connection = useConnection();
   const location = useLocation();
   const navigate = useNavigate();
-  const [query, setQuery] = useState('');
   // En tablet y celular el menú lateral es un panel que se abre con el botón de la barra superior.
   const [menuOpen, setMenuOpen] = useState(false);
   const closeMenu = () => setMenuOpen(false);
@@ -53,13 +52,6 @@ function Shell() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [menuOpen]);
-
-  function search(event: FormEvent) {
-    event.preventDefault();
-    const value = query.trim();
-    if (value) navigate(`/incidencias?q=${encodeURIComponent(value)}`);
-    closeMenu();
-  }
 
   return (
     <div className="shell">
@@ -82,16 +74,6 @@ function Shell() {
             <div className="topbar-sub mono">SISTEMA INTEGRADO DE TELEMETRÍA VIAL</div>
           </div>
         </div>
-        <form className="topbar-search input-icon" onSubmit={search} role="search">
-          <Icon name="search" />
-          <input
-            className="input"
-            placeholder="Buscar por código de incidencia"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            aria-label="Buscar por código de incidencia"
-          />
-        </form>
         <nav className="topbar-nav">
           <NavLink to="/" end className={({ isActive }) => (isActive || location.pathname !== '/mapa' ? 'tab active' : 'tab')}>
             Centro de Control
@@ -123,16 +105,6 @@ function Shell() {
 
       {menuOpen ? <div className="sidebar-backdrop" onClick={closeMenu} aria-hidden="true" /> : null}
       <aside id="sidebar" className={menuOpen ? 'sidebar open' : 'sidebar'}>
-        <form className="sidebar-search input-icon" onSubmit={search} role="search">
-          <Icon name="search" />
-          <input
-            className="input"
-            placeholder="Buscar por código de incidencia"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            aria-label="Buscar por código de incidencia"
-          />
-        </form>
         <div className="org">
           <span className="org-icon">
             <Icon name="location_city" />
