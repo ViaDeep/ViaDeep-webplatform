@@ -61,9 +61,6 @@
   .main { margin-left: 0; }
 }
 /* Celular */
-@media (max-width: 900px) {
-  .topbar-title-org { display: none; }
-}
 @media (max-width: 640px) {
   .topbar-title { font-size: 15px; }
   .topbar-extra { display: none; }

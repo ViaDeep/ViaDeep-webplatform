@@ -77,7 +77,7 @@ function Shell() {
           <Logo size={34} />
           <div>
             <div className="topbar-title">
-              ViaDeep<span className="topbar-title-org"> | Municipalidad Metropolitana de Lima</span>
+              ViaDeep
             </div>
             <div className="topbar-sub mono">SISTEMA INTEGRADO DE TELEMETRÍA VIAL</div>
           </div>
