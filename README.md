@@ -47,6 +47,10 @@ Para un despliegue detrás del API Gateway, `VITE_API_URL` define la URL base de
 | `npm run lint` | Revisa el código con oxlint |
 | `npm test` | Ejecuta las pruebas con Vitest |
 
+## Servidor de la demo
+
+El `Dockerfile` compila la web y la sirve con Caddy (`Caddyfile`), que además reparte `/auth`, `/incidents`, `/evidences` y `/notifications` a los microservicios y obtiene el certificado https. No se usa solo: lo levanta `deploy/docker-compose.prod.yml` del repositorio ViaDeep-backend, con este repositorio clonado al lado (ver el README del backend).
+
 ## Estado
 
 Ya funcionan el inicio de sesión de operadores, el dashboard, la tabla de incidencias con filtros y el detalle de una incidencia (cambio de estado y severidad). El diseño final de las 10 pantallas se aplicará a partir de los mockups de Figma; las secciones Mapa SIG, Asignaciones, Estadísticas, Usuarios, Notificaciones y Configuración están reservadas hasta entonces.
