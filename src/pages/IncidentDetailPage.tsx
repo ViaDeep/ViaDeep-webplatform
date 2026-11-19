@@ -10,11 +10,13 @@ import {
   displayStatus,
   formatDate,
   formatTime,
+  incidentDetections,
   nextStatuses,
   reportCode,
   SEVERITIES,
   SEVERITY_LABELS,
   TYPE_LABELS,
+  type DetectedDamage,
   type HistoryEntry,
   type IncidentDetail,
   type IncidentStatus,
@@ -137,7 +139,8 @@ export function IncidentDetailPage() {
 
 function EvidenceCard({ incident, photo }: { incident: IncidentDetail; photo: string | null }) {
   const [showAi, setShowAi] = useState(true);
-  const ai = incident.aiResult;
+  const { accepted, below } = incidentDetections(incident);
+  const ai = accepted.length + below.length > 0;
   return (
     <section className="card evidence">
       <div className="evidence-head">
@@ -151,17 +154,12 @@ function EvidenceCard({ incident, photo }: { incident: IncidentDetail; photo: st
       </div>
       <div className="evidence-photo">
         {photo ? <img src={photo} alt={`Foto del reporte ${reportCode(incident.id, incident.createdAt)}`} /> : <div className="evidence-empty">Foto no disponible</div>}
-        {photo && ai && showAi ? (
-          <div
-            className="bbox"
-            style={{ left: `${ai.bboxX * 100}%`, top: `${ai.bboxY * 100}%`, width: `${ai.bboxWidth * 100}%`, height: `${ai.bboxHeight * 100}%` }}
-          >
-            <span className="bbox-label mono">
-              {TYPE_LABELS[incident.type].toUpperCase()} | {(ai.confidence * 100).toFixed(1)}%
-            </span>
-            <span className="bbox-center" />
-          </div>
-        ) : null}
+        {photo && showAi
+          ? // Las de menor confianza primero, para que las aceptadas queden encima.
+            [...below.map((d) => ({ d, muted: true })), ...accepted.map((d) => ({ d, muted: false }))].map(({ d, muted }, index) => (
+              <DetectionBox key={index} detection={d} muted={muted} />
+            ))
+          : null}
         {photo ? (
           <div className="evidence-tools">
             {ai ? (
@@ -187,9 +185,32 @@ function EvidenceCard({ incident, photo }: { incident: IncidentDetail; photo: st
   );
 }
 
+function DetectionBox({ detection, muted }: { detection: DetectedDamage; muted: boolean }) {
+  return (
+    <div
+      className={muted ? 'bbox bbox-muted' : 'bbox'}
+      style={{
+        left: `${detection.bboxX * 100}%`,
+        top: `${detection.bboxY * 100}%`,
+        width: `${detection.bboxWidth * 100}%`,
+        height: `${detection.bboxHeight * 100}%`,
+      }}
+    >
+      <span className={detection.bboxY < 0.06 ? 'bbox-label bbox-label-inside mono' : 'bbox-label mono'}>
+        {TYPE_LABELS[detection.type].toUpperCase()} | {(detection.confidence * 100).toFixed(1)}%
+      </span>
+      {muted ? null : <span className="bbox-center" />}
+    </div>
+  );
+}
+
+function reliability(confidence: number): string {
+  return confidence >= 80 ? 'Alta fiabilidad' : confidence >= 70 ? 'Fiabilidad media' : 'Baja fiabilidad';
+}
+
 function TechnicalCard({ incident, reporter }: { incident: IncidentDetail; reporter: User | null }) {
-  const ai = incident.aiResult;
-  const confidence = ai ? ai.confidence * 100 : null;
+  const { accepted, below } = incidentDetections(incident);
+  const types = [...new Set(accepted.map((d) => d.type))];
   return (
     <section className="card technical">
       <div className="technical-body">
@@ -200,23 +221,48 @@ function TechnicalCard({ incident, reporter }: { incident: IncidentDetail; repor
             ID {incident.id.slice(0, 8).toUpperCase()}
           </span>
         </div>
-        <Item label="Tipo de incidencia">
-          <DamageTypeLabel type={incident.type} />
+        <Item label={types.length > 1 ? 'Tipos de incidencia' : 'Tipo de incidencia'}>
+          <div className="detection-types">
+            {(types.length > 0 ? types : [incident.type]).map((type) => (
+              <DamageTypeLabel key={type} type={type} />
+            ))}
+          </div>
         </Item>
-        <Item label="Nivel de confianza IA">
-          {confidence !== null ? (
-            <div className="confidence">
-              <span className="confidence-box mono">
-                <Icon name="check_circle" size={16} /> {confidence.toFixed(1)}% {confidence >= 80 ? 'Alta fiabilidad' : confidence >= 50 ? 'Fiabilidad media' : 'Baja fiabilidad'}
-              </span>
-              <span className="mono muted" style={{ fontSize: 11 }}>
-                LMD-YOLO
-              </span>
+        <Item label={accepted.length > 1 ? `Daños detectados por la IA (${accepted.length})` : 'Nivel de confianza IA'}>
+          {accepted.length > 0 ? (
+            <div className="detection-list">
+              {accepted.map((d, index) => (
+                <div key={index} className="confidence">
+                  <span className="confidence-box mono">
+                    <Icon name="check_circle" size={16} /> {accepted.length > 1 ? `${TYPE_LABELS[d.type]} · ` : ''}
+                    {(d.confidence * 100).toFixed(1)}% {reliability(d.confidence * 100)}
+                  </span>
+                  {index === 0 ? (
+                    <span className="mono muted" style={{ fontSize: 11 }}>
+                      LMD-YOLO
+                    </span>
+                  ) : null}
+                </div>
+              ))}
             </div>
           ) : (
             <span className="muted">Registro manual (sin detección IA)</span>
           )}
         </Item>
+        {below.length > 0 ? (
+          <Item label="Reconocidos bajo el mínimo de confianza">
+            <div className="detection-list">
+              {below.map((d, index) => (
+                <span key={index} className="confidence-box confidence-box-muted mono">
+                  <Icon name="help" size={16} /> {TYPE_LABELS[d.type]} · {(d.confidence * 100).toFixed(1)}%
+                </span>
+              ))}
+              <span className="muted" style={{ fontSize: 12 }}>
+                El modelo los vio con menos seguridad que el mínimo de la app; no cuentan como daños del reporte.
+              </span>
+            </div>
+          </Item>
+        ) : null}
         <Item label="Fecha y hora de registro">
           {new Date(incident.createdAt).toLocaleDateString('es-PE', { day: 'numeric', month: 'long', year: 'numeric' })} · {formatTime(incident.createdAt)}
         </Item>

@@ -14,6 +14,10 @@
 .evidence-empty { height: 260px; display: flex; align-items: center; justify-content: center; color: #cbd5e1; }
 .bbox { position: absolute; border: 2px solid #1d8cff; background: rgba(29, 140, 255, 0.18); }
 .bbox-label { position: absolute; top: -1px; left: -1px; transform: translateY(-100%); background: #0f2042; color: #7cc0ff; font-size: 11px; padding: 3px 8px; white-space: nowrap; }
+.bbox-muted { border-style: dashed; border-color: #f59e0b; background: rgba(245, 158, 11, 0.08); }
+.bbox-muted .bbox-label { color: #fcd34d; background: rgba(15, 32, 66, 0.8); }
+.bbox-label-inside { top: 2px; left: 2px; transform: none; }
+.detection-types, .detection-list { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
 .bbox-center { position: absolute; left: 50%; top: 50%; width: 12px; height: 12px; margin: -6px; border: 2px solid #fff; border-radius: 50%; background: #1d8cff; }
 .evidence-tools { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; background: rgba(15, 32, 66, 0.85); padding: 4px; border-radius: 4px; }
 .evidence-btn { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border: none; border-radius: 3px; background: transparent; color: #fff; cursor: pointer; font-size: 12px; }
@@ -31,6 +35,7 @@
 .item-value { font-size: 14px; font-weight: 500; color: var(--text-strong); }
 .confidence { display: flex; align-items: center; gap: 10px; }
 .confidence-box { display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: 3px; background: var(--success-surface); border: 1px solid #b5e8d4; color: var(--success); font-size: 12px; }
+.confidence-box-muted { color: #92400e; background: #fffbeb; border-color: #fcd34d; }
 .coords { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; border-radius: 3px; background: var(--surface-muted); border: 1px solid var(--border-faint); }
 .coords .mono { font-size: 12px; }
 .coords a { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; }
