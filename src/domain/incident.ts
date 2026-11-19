@@ -24,6 +24,9 @@ export const SEVERITY_LABELS: Record<Severity, string> = { LOW: 'Baja', MEDIUM: 
 
 export type AiResult = { confidence: number; bboxX: number; bboxY: number; bboxWidth: number; bboxHeight: number };
 
+/** Un daño que LMD-YOLO reconoció en la foto; accepted indica si superó el umbral de confianza de la app. */
+export type DetectedDamage = AiResult & { type: IncidentType; accepted: boolean };
+
 export type IncidentSummary = {
   id: string;
   type: IncidentType;
@@ -53,6 +56,8 @@ export type IncidentDetail = IncidentSummary & {
   evidenceId: string;
   description: string | null;
   aiResult: AiResult | null;
+  /** Todas las detecciones de la foto, de mayor a menor confianza (los reportes antiguos traen solo la principal). */
+  detections?: DetectedDamage[];
   assignmentNote: string | null;
   history: HistoryEntry[];
   possibleDuplicates: string[];
@@ -158,4 +163,19 @@ export function percent(part: number, total: number): string {
 export function initials(name: string): string {
   const words = name.replace(/^(Ing|Lic|Dr|Dra|Arq|Bach|Tec)\.\s+/i, '').split(/\s+/).filter(Boolean);
   return words.slice(0, 2).map((word) => word[0]!.toUpperCase()).join('') || '?';
+}
+
+/**
+ * Detecciones del reporte separadas en las que superaron el umbral (los daños del reporte) y las que el modelo
+ * reconoció con menos confianza. Si el backend no envía la lista, la detección principal es la única.
+ */
+export function incidentDetections(incident: IncidentDetail): { accepted: DetectedDamage[]; below: DetectedDamage[] } {
+  const all: DetectedDamage[] =
+    incident.detections && incident.detections.length > 0
+      ? incident.detections
+      : incident.aiResult
+        ? [{ ...incident.aiResult, type: incident.type, accepted: true }]
+        : [];
+  const sorted = [...all].sort((a, b) => b.confidence - a.confidence);
+  return { accepted: sorted.filter((d) => d.accepted), below: sorted.filter((d) => !d.accepted) };
 }
